@@ -1,0 +1,77 @@
+{% extends "main.html" %}
+
+{% block title %} Ед. изм. {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-outline-primary me-1" title="Добавить" data-bs-toggle="modal" data-bs-target="#add-unit">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Наименование</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for unit in units %}
+    <tr>
+      <td class="align-middle">{{ unit.name }}</td>
+      <td class="text-center">
+        <a class="btn btn-success text-center edit-unit" title="Изменить" data-pk="{{ unit.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center delete-unit" title="Удалить" data-pk="{{ unit.pk }}" data-name="{{ unit.name }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.edit-unit').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/units/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-unit').modal('show');
+      });
+    });
+    $('.delete-unit').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/units/delete/' + pk + '/';
+      console.log('url for delete unit = ' + url);
+      $('#delete-unit .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-unit .message').html('Удалить ед. изм. "' + name + '"?');
+      $('#delete-unit').modal('show');
+    });
+  });
+</script>
+<div class="edit-modal">
+</div>
+{% include 'delete_unit.html' %}
+{% endblock content %}

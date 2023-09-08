@@ -1,0 +1,17 @@
+<div class="modal fade" id="delete-staff" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="message" style="text-align: center; vertical-align: middle; font-size: 18px;">
+      </div>
+      <form action="" method="POST" class="form">
+        <div class="modal-body invisible">
+          {% csrf_token %}
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Удалить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

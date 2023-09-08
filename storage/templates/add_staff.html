@@ -1,0 +1,31 @@
+<div class="modal fade" id="add-staff" tabindex="-1" aria-labelledby="add-staff-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="add-staff-label">Добавление персонала</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'storage:add-staff' %}" method="POST" class="form">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            {{ add_staff_form.surname }}
+            <label for="surname">Фамилия</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_staff_form.name }}
+            <label for="name">Имя</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_staff_form.patronymic }}
+            <label for="patronymic">Отчество</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Добавить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

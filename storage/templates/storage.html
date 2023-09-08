@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+
+{% block title %} Склад {% endblock title %}
+
+{% block buttons %}
+<button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
+  <i class="fa fa-filter"></i>
+</button>
+{% endblock buttons %}
+
+{% block filters %}
+<form action="storage" method="POST" class="form">
+  {% csrf_token %}
+    <div class="form-floating mb-3">
+      {{ filter_form.text_filter }}
+    <label for="text_filter">Наименование</label>
+  </div>
+  <div class="form-floating mb-3">
+    {{ filter_form.category }}
+    <label for="text_filter">Категория</label>
+  </div>
+  <input type="submit" value="Применить">
+</form>
+{% endblock filters %}
+
+{% block content %}
+  <div class="filter">
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Наименование</th>
+        <th style="text-align: center">Ед. изм.</th>
+        <th style="text-align: center">Кол-во</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in storage %}
+      <tr>
+        <td>{{item.item}}</td>
+        <td style="text-align: center">{{item.units}}</td>
+        <td style="text-align:center">{{item.count}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock content %}

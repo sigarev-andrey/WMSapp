@@ -1,0 +1,88 @@
+{% extends "main.html" %}
+
+{% block title %} Позиция {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-primary me-1" data-bs-toggle="modal" data-bs-target="#add-item">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+{% if add_category_form.errors %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ add_item_form.errors }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Наименование</th>
+      <th class="text-center">Категория</th>
+      <th class="text-center">Ед. изм.</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.manufacturer }} {{ item.article }} {{ item.description }}</td>
+      <td class="text-center">{{ item.category }}</td>
+      <td class="text-center">{{ item.unit }}</td>
+      <td class="text-center">
+        <a class="btn btn-success text-center edit-item" title="Изменить" data-pk="{{ item.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center delete-item" title="Удалить" data-pk="{{ item.pk }}"
+          data-name="{{ item.manufacturer }} {{ item.article }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.edit-item').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/items/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-item').modal('show');
+      });
+    });
+    $('.delete-item').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/items/delete/' + pk + '/';
+      console.log('url for delete item = ' + url);
+      $('#delete-item .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-item .message').html('Удалить позицию "' + name + '"?');
+      $('#delete-item').modal('show');
+    });
+  });
+</script>
+<div class="edit-modal">
+</div>
+{% include 'delete_item.html' %}
+{% endblock content %}

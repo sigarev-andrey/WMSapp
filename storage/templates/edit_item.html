@@ -1,0 +1,39 @@
+<div class="modal fade" id="edit-item" tabindex="-1" aria-labelledby="edit-item-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="edit-item-label">Редактирование позиции</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'storage:edit-item' id %}" method="POST" class="form">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            {{ edit_item_form.manufacturer }}
+            <label for="manufacturer_name">Производитель</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ edit_item_form.article }}
+            <label for="article">Артикул</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ edit_item_form.category }}
+            <label for="category_name">Категория</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ edit_item_form.description }}
+            <label for="description">Описание</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ edit_item_form.unit }}
+            <label for="unit_name">Ед. Изм.</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Изменить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

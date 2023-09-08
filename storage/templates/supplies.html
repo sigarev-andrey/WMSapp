@@ -1,0 +1,99 @@
+{% extends "main.html" %}
+
+{% block title %} Поставки {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block supply_link_active %} class="nav-link active" {% endblock supply_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-primary me-1 add-supply" title="Добавить">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Дата</th>
+      <th>Договор</th>
+      <th>Описание</th>
+      <th class="text-center" style="width: 10%;">Подробно</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for supply in supplies %}
+    <tr>
+      <td class="align-middle">{{ supply.date|date:'d.m.Y' }}</td>
+      <td class="align-middle">{{ supply.contract }}</td>
+      <td class="align-middle">{{ supply.description }}</td>
+      <td class="text-center">
+        <a class="btn btn-success text-center open-supply" title="Подробно" href="{% url 'storage:details-supply' supply.pk %}">
+          <i class="fa fa-search"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center edit-supply" title="Изменить" data-pk="{{ supply.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center delete-supply" title="Удалить" data-pk="{{ supply.pk }}" data-name="{{ supply.date }} {{ supply.contract }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.add-supply').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/supplies/add/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.add-modal').html(data);
+        }
+      }).done(function () {
+        $('#add-supply').modal('show');
+      });
+    });
+    $('.edit-supply').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/supply/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-unit').modal('show');
+      });
+    });
+    $('.delete-supply').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/supply/delete/' + pk + '/';
+      console.log('url for delete supply = ' + url);
+      $('#delete-unit .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-unit .message').html('Удалить ед. изм. "' + name + '"?');
+      $('#delete-unit').modal('show');
+    });
+  });
+</script>
+<div class="add-modal"></div>
+<div class="edit-modal"></div>
+{% endblock content %}

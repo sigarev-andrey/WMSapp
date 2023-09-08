@@ -1,0 +1,96 @@
+{% extends "main.html" %}
+
+{% block title %} Договоры {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-primary me-1" title="Добавить" data-bs-toggle="modal"
+  data-bs-target="#add-contract">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+{% if add_category_form.errors %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ add_item_form.errors }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Короткий номер</th>
+      <th>Полный номер</th>
+      <th>Дата подписания</th>
+      <th>Описание</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for contract in contracts %}
+    <tr>
+      <td>{{ contract.short_number }}</td>
+      <td>{{ contract.full_number }}</td>
+      <td>{{ contract.date }}</td>
+      <td>{{ contract.description }}</td>
+      <td class="text-center">
+        <a class="btn btn-success text-center edit-contract" title="Изменить" data-pk="{{ contract.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center delete-contract" title="Удалить" data-pk="{{ contract.pk }}"
+          data-name="{{ contract.short_number }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.edit-contract').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/contracts/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-contract').modal('show');
+      });
+    });
+    $('.delete-contract').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/contracts/delete/' + pk + '/';
+      console.log('url for delete contract = ' + url);
+      $('#delete-contract .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-contract .message').html('Удалить договор "' + name + '"?');
+      $('#delete-contract').modal('show');
+    });
+    $('#date').datepicker({
+      format: "dd.mm.yyyy",
+      todayBtn: "linked",
+      language: "ru"
+    });
+  });
+</script>
+<div class="edit-modal">
+</div>
+{% include 'delete_contract.html' %}
+{% endblock content %}

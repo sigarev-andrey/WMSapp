@@ -1,0 +1,92 @@
+{% extends "main.html" %}
+
+{% block title %} Поставки {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block supply_link_active %} class="nav-link active" {% endblock supply_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-primary me-1 add-staff" title="Добавить">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Фамилия</th>
+      <th>Имя</th>
+      <th>Отчество</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for person in staff %}
+    <tr>
+      <td class="align-middle">{{ person.surname }}</td>
+      <td class="align-middle">{{ person.name }}</td>
+      <td class="align-middle">{{ person.patronymic }}</td>
+      <td class="text-center">
+        <a class="btn btn-outline-success text-center edit-staff" title="Изменить" data-pk="{{ person.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-outline-success text-center delete-staff" title="Удалить" data-pk="{{ person.pk }}" data-name="{{ person }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.add-staff').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/staff/add/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.add-modal').html(data);
+        }
+      }).done(function () {
+        $('#add-staff').modal('show');
+      });
+    });
+    $('.edit-staff').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      $.ajax({
+        url: '/staff/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-staff').modal('show');
+      });
+    });
+    $('.delete-staff').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log('Get PK ' + pk);
+      name = $(this).data('name');
+      console.log('Get name ' + name);
+      url = '/staff/delete/' + pk + '/';
+      console.log('Get URL ' + url);
+      $('#delete-staff .form').attr('action', url);
+      $('#delete-staff .message').html('Удалить "' + name + '"?');
+      $('#delete-staff').modal('show');
+    });
+  });
+</script>
+<div class="add-modal"></div>
+<div class="edit-modal"></div>
+{% include 'delete_staff.html' %}
+{% endblock content %}

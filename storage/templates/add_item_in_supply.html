@@ -1,0 +1,27 @@
+<div class="modal fade" id="add-item" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="add-item-label">Добавление позиции</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'storage:add-item-in-supply' id %}" method="POST" class="form">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            {{ add_item_in_supply_form.item }}
+            <label for="short_number">Позиция</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_item_in_supply_form.count }}
+            <label for="full_number">Кол-во</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Добавить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

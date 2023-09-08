@@ -1,0 +1,91 @@
+{% extends "main.html" %}
+
+{% block title %} Категории {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-primary me-1" title="Добавить" data-bs-toggle="modal"
+  data-bs-target="#add-category">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+{% if add_category_form.errors %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ add_category_form.errors }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% if edit_category_form.errors %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ edit_category_form.errors }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Наименование</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in categories %}
+    <tr>
+      <td class="align-middle">{{ category.name }}</td>
+      <td class="text-center">
+        <a href="" class="btn btn-success text-center edit-category" title="Изменить" data-pk="{{ category.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center delete-category" title="Удалить" data-pk="{{ category.pk }}"
+          data-name="{{ category.name }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.edit-category').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/categories/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-category').modal('show');
+      });
+    });
+    $('.delete-category').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/categories/delete/' + pk + '/';
+      console.log('url for delete category = ' + url);
+      $('#delete-category .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-category .message').html('Удалить категорию "' + name + '"?');
+      $('#delete-category').modal('show');
+    });
+  });
+</script>
+<div class="edit-modal">
+</div>
+{% include 'delete_category.html' %}
+{% endblock content %}
