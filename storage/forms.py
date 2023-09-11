@@ -185,19 +185,6 @@ class BootstrapSupplyForm(SupplyForm):
                 'class': 'form-control'
             })
 
-class StaffForm(ModelForm):
-    class Meta:
-        model = Staff
-        fields = ['name', 'surname', 'patronymic']
-
-class BootstrapStaffForm(StaffForm):
-    def __init__(self, *args, **kwargs):
-        super(BootstrapStaffForm, self).__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control'
-            })
-
 class CompanyForm(ModelForm):
     class Meta:
         model = Company
