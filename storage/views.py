@@ -249,7 +249,7 @@ def user_logout(request):
 def contracts(request):
     contracts = Contract.objects.all()
     if (request.method == 'POST'):
-        add_contract_form = BootstrapAddContractForm(request.POST)
+        add_contract_form = ContractForm(request.POST)
         if add_contract_form.is_valid:
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -257,7 +257,7 @@ def contracts(request):
             add_contract_form.save()
             return redirect('/contracts/')
     else:
-        add_contract_form = BootstrapAddContractForm()
+        add_contract_form = ContractForm()
     return render(request,
                   'contracts.html',
                   {'contracts': contracts,
@@ -266,7 +266,7 @@ def contracts(request):
 def edit_contract(request, id=None):
     contract = get_object_or_404(Contract, pk=id)
     if (request.method == 'POST'):
-        edit_contract_form = BootstrapAddContractForm(request.POST, instance=contract)
+        edit_contract_form = ContractForm(request.POST, instance=contract)
         if edit_contract_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -278,7 +278,7 @@ def edit_contract(request, id=None):
                              edit_contract_form.errors.as_data())
         return redirect('/contracts/')
     else:
-        edit_contract_form = BootstrapAddContractForm(instance=contract)
+        edit_contract_form = ContractForm(instance=contract)
     return render(request,
                   'edit_contract.html',
                   {'edit_contract_form': edit_contract_form,

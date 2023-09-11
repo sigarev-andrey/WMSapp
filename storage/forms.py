@@ -131,7 +131,7 @@ class BootstrapAddItemForm(AddItemForm):
             'placeholder': 'Ед. изм.'
         })
 
-class AddContractForm(ModelForm):
+class ContractForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
