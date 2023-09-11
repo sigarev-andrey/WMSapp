@@ -132,35 +132,35 @@ class BootstrapAddItemForm(AddItemForm):
         })
 
 class AddContractForm(ModelForm):
-    class Meta:
-        model = Contract
-        fields = ['short_number', 'full_number', 'date', 'description']
 
-class BootstrapAddContractForm(AddContractForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapAddContractForm, self).__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({
+        super().__init__(*args, **kwargs)
+        self.fields['date'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date',
+                'placeholder': 'yyyy-mm-dd (DOB)',
                 'class': 'form-control'
-            })
+            }
+        )
         self.fields['short_number'].widget.attrs.update({
+            'class': 'form-control',
             'id': 'short_number',
             'placeholder': 'Короткий номер'
         })
         self.fields['full_number'].widget.attrs.update({
+            'class': 'form-control',
             'id': 'full_number',
             'placeholder': 'Полный номер'
         })
-        self.fields['date'].widget.attrs.update({
-            'type': 'date',
-            'onkeydown': 'return false',
-            'id': 'date',
-            'placeholder': 'Дата подписания'
-        })
         self.fields['description'].widget.attrs.update({
+            'class': 'form-control',
             'id': 'description',
             'placeholder': 'Описание'
         })
+
+    class Meta:
+        model = Contract
+        fields = ['short_number', 'full_number', 'date', 'description']
 
 class SupplyForm(ModelForm):
 
