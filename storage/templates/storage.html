@@ -9,7 +9,7 @@
 {% endblock buttons %}
 
 {% block filters %}
-<form action="storage" method="POST" class="form">
+<form action="{%url 'storage:storage' %}" method="POST" class="form">
   {% csrf_token %}
     <div class="form-floating mb-3">
       {{ filter_form.text_filter }}
