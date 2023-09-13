@@ -124,15 +124,19 @@ def categories(request):
     categories = Category.objects.all()
     context['categories'] = categories
     if (request.method == 'POST'):
-        add_category_form = BootstrapAddCategoryForm(request.POST)
+        add_category_form = CategoryForm(request.POST)
         if add_category_form.is_valid():
             messages.add_message(request,
                                 messages.SUCCESS,
                                 'Ед. изм. успешно добавлена')
             add_category_form.save()
             return redirect('/categories/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_category_form.errors.as_data())
+        return redirect('/categories/')
     else:
-        add_category_form = BootstrapAddCategoryForm()
+        add_category_form = CategoryForm()
         context['add_category_form'] = add_category_form
     return render(request,
                   'categories.html',
@@ -141,7 +145,7 @@ def categories(request):
 def edit_category(request, id=None):
     category = get_object_or_404(Category, pk=id)
     if (request.method == 'POST'):
-        edit_category_form = BootstrapAddCategoryForm(request.POST, instance=category)
+        edit_category_form = CategoryForm(request.POST, instance=category)
         if edit_category_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -153,7 +157,7 @@ def edit_category(request, id=None):
                              edit_category_form.errors.as_data())
         return redirect('/categories/')
     else:
-        edit_category_form = BootstrapAddCategoryForm(instance=category)
+        edit_category_form = CategoryForm(instance=category)
     return render(request,
                   'edit_category.html',
                   {'edit_category_form': edit_category_form,

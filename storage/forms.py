@@ -81,14 +81,9 @@ class BootstrapAddUnitForm(AddUnitForm):
             'placeholder': 'Наименование'
         })
 
-class AddCategoryForm(ModelForm):
-    class Meta:
-        model = Category
-        fields = ['name']
-
-class BootstrapAddCategoryForm(AddCategoryForm):
+class CategoryForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapAddCategoryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -97,6 +92,10 @@ class BootstrapAddCategoryForm(AddCategoryForm):
             'id': 'category-name',
             'placeholder': 'Наименование'
         })
+
+    class Meta:
+        model = Category
+        fields = ['name']
 
 class AddItemForm(ModelForm):
     class Meta:
