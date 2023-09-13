@@ -25,6 +25,8 @@
 /*Bootstrap .navbar*/
 .navbar {
   background-color: #EDECE6;
+  border: 1px solid;
+  border-color: #00386C;
 }
 .navbar .navbar-brand {
   color: #fdffff;
