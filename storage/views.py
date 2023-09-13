@@ -131,6 +131,10 @@ def categories(request):
                                 'Ед. изм. успешно добавлена')
             add_category_form.save()
             return redirect('/categories/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_category_form.errors.as_data())
+        return redirect('/categories/')
     else:
         add_category_form = CategoryForm()
         context['add_category_form'] = add_category_form
