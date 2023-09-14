@@ -70,14 +70,14 @@
       pk = $(this).data('pk');
       console.log(pk);
       $.ajax({
-        url: '/supply/edit/' + pk + '/',
+        url: '/supplies/edit/' + pk + '/',
         type: 'GET',
         success: function (data) {
           console.log(data);
           $('.edit-modal').html(data);
         }
       }).done(function () {
-        $('#edit-unit').modal('show');
+        $('#edit-supply').modal('show');
       });
     });
     $('.delete-supply').on('click', function (e) {
