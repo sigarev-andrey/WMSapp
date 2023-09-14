@@ -338,6 +338,7 @@ def edit_supply(request, id=False):
         return redirect('/supplies/')
     else:
         edit_supply_form = BootstrapSupplyForm(instance=supply)
+        edit_supply_form.fields['contract'].disabled = True
     return render(request,
                   'edit_supply.html',
                   {'edit_supply_form': edit_supply_form,

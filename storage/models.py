@@ -94,9 +94,9 @@ class Supply(models.Model):
 
 class ItemInSupply(models.Model):
     item = models.ForeignKey(Item,
-                             on_delete=models.CASCADE)
+                             on_delete=models.PROTECT)
     supply = models.ForeignKey(Supply,
-                               on_delete=models.CASCADE)
+                               on_delete=models.PROTECT)
     count = models.PositiveIntegerField()
 
 class Staff(models.Model):
