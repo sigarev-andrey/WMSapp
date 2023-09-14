@@ -135,9 +135,9 @@ class ContractForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['date'].widget = forms.widgets.DateInput(
+            format=('%Y-%m-%d'),
             attrs={
                 'type': 'date',
-                'placeholder': 'yyyy-mm-dd (DOB)',
                 'class': 'form-control'
             }
         )
@@ -167,10 +167,10 @@ class SupplyForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['date'].widget = forms.widgets.DateInput(
             attrs={
-                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'type': 'date',
                 'class': 'form-control'
-                }
-            )
+            }
+        )
 
     class Meta:
         model = Supply
