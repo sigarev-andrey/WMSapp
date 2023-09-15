@@ -359,7 +359,8 @@ def delete_supply(request, id=False):
 
 def details_supply(request, id):
     supply = get_object_or_404(Supply, pk=id)
-    items = supply.items.through.objects.all()
+    #items = supply.items.through.objects.all()
+    items = ItemInSupply.objects.filter(supply=supply.pk)
     return render(request,
                   'details_supply.html',
                   {'supply': supply,
