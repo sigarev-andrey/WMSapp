@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse
 from .models import Storage, Category, Manufacturer, Unit
 from django.db import transaction
-from django.db.models import CharField, Value
+from django.db.models import CharField, Value, Sum, F
 from django.db.models.functions import Concat
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -10,6 +10,9 @@ from .forms import *
 
 def storage(request):
     storage = Storage.objects.all()
+    storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
+                                                     'item__description', output_field=CharField()))
+    storage = storage.values('full_item_name', unit=F('item__unit__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
     filter_form = BootstrapStorageFilterForm()
     if request.method == 'POST':
         filter_form = BootstrapStorageFilterForm(request.POST)
@@ -17,8 +20,6 @@ def storage(request):
         if params['category']:
             storage = storage.filter(item__category__id=params['category'])
         if params['text_filter']:
-            storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
-                                                             'item__description', output_field=CharField()))
             storage = storage.filter(full_item_name__icontains=params['text_filter'])
     return render(request,
                   'storage.html',
@@ -359,7 +360,6 @@ def delete_supply(request, id=False):
 
 def details_supply(request, id):
     supply = get_object_or_404(Supply, pk=id)
-    #items = supply.items.through.objects.all()
     items = ItemInSupply.objects.filter(supply=supply.pk)
     return render(request,
                   'details_supply.html',
