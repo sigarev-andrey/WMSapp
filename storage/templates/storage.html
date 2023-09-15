@@ -19,7 +19,7 @@
     {{ filter_form.category }}
     <label for="text_filter">Категория</label>
   </div>
-  <input type="submit" value="Применить">
+  <button type="submit" class="btn btn-outline-primary" title="Применить фильтры">Применить</button>
 </form>
 {% endblock filters %}
 
@@ -37,9 +37,9 @@
     <tbody>
       {% for item in storage %}
       <tr>
-        <td>{{item.item}}</td>
-        <td style="text-align: center">{{item.units}}</td>
-        <td style="text-align:center">{{item.count}}</td>
+        <td>{{item.full_item_name}}</td>
+        <td style="text-align: center">{{item.unit}}</td>
+        <td style="text-align:center">{{item.total_count}}</td>
       </tr>
       {% endfor %}
     </tbody>
