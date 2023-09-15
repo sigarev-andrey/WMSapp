@@ -394,6 +394,28 @@ def add_item_in_supply(request, id):
                     {'add_item_in_supply_form': add_item_in_supply_form,
                      'id': id})
 
+@transaction.atomic
+def delete_item_from_supply(request, id):
+    item_in_supply = get_object_or_404(ItemInSupply, pk=id)
+    supply_id = item_in_supply.supply.pk
+    item_in_storage = get_object_or_404(Storage,
+                                        item=item_in_supply.item,
+                                        contract=item_in_supply.supply.contract)
+    if (item_in_supply.count > item_in_storage.count):
+        messages.add_message(request,
+                        messages.ERROR,
+                        'Невозможно удалить т.к. позиция выдана')
+    else:
+        try:
+            item_in_storage.count -= item_in_supply.count
+            item_in_storage.save()
+            item_in_supply.delete()
+        except Exception as e:
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 e)
+    return redirect('/supplies/details/' + str(supply_id) + '/')
+
 def staff(request):
     staff = Staff.objects.all()
     return render(request,

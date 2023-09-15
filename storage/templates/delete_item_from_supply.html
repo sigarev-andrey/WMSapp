@@ -1,0 +1,17 @@
+<div class="modal fade" id="delete-item-from-supply" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="" method="POST" class="form">
+          <div class="modal-body">
+            {% csrf_token %}
+            <div class="message" style="vertical-align: middle; font-size: 18px;">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-outline-danger">Удалить</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

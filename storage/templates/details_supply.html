@@ -31,7 +31,7 @@
       <td>{{ item.item.unit }}</td>
       <td>{{ item.count }}</td>
       <td class="text-center">
-        <a class="btn btn-success text-center delete-supply" title="Удалить" data-pk="{{ supply.pk }}" data-name="{{ supply.date }} {{ supply.contract }}">
+        <a class="btn btn-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -69,21 +69,21 @@
         $('#edit-unit').modal('show');
       });
     });
-    $('.delete-unit').on('click', function (e) {
+    $('.delete-item-from-supply').on('click', function (e) {
       e.preventDefault();
       pk = $(this).data('pk');
       name = $(this).data('name');
       console.log(pk);
-      url = '/units/delete/' + pk + '/';
+      url = '/supplies/details/delete-item/' + pk + '/';
       console.log('url for delete unit = ' + url);
-      $('#delete-unit .form').attr('action', url);
+      $('#delete-item-from-supply .form').attr('action', url);
       console.log('delete form action changed')
-      $('#delete-unit .message').html('Удалить ед. изм. "' + name + '"?');
-      $('#delete-unit').modal('show');
+      $('#delete-item-from-supply .message').html('Удалить "' + name + '"?');
+      $('#delete-item-from-supply').modal('show');
     });
   });
 </script>
 <div class="add-modal"></div>
 <div class="edit-modal"></div>
-{% include 'delete_unit.html' %}
+{% include 'delete_item_from_supply.html' %}
 {% endblock content %}
