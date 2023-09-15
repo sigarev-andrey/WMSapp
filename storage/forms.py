@@ -166,6 +166,7 @@ class SupplyForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['date'].widget = forms.widgets.DateInput(
+            format=('%Y-%m-%d'),
             attrs={
                 'type': 'date',
                 'class': 'form-control'
