@@ -5,10 +5,8 @@ from .models import *
 class StorageFilterForm(forms.Form):
     text_filter = forms.CharField(max_length=255, required=False)
     category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label='Не выбрана')
-
-class BootstrapStorageFilterForm(StorageFilterForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapStorageFilterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -25,10 +23,8 @@ class BootstrapStorageFilterForm(StorageFilterForm):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-
-class BootstrapLoginForm(LoginForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapLoginForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -47,14 +43,9 @@ class BootstrapLoginForm(LoginForm):
             'aria-describedby': 'pass-icon'
         })
 
-class AddManufacturerForm(ModelForm):
-    class Meta:
-        model = Manufacturer
-        fields = ['name']
-
-class BootstrapAddManufacturerForm(AddManufacturerForm):
+class ManufacturerForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapAddManufacturerForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -64,14 +55,13 @@ class BootstrapAddManufacturerForm(AddManufacturerForm):
                 'placeholder': 'Наименование'
         })
 
-class AddUnitForm(ModelForm):
     class Meta:
-        model = Unit
+        model = Manufacturer
         fields = ['name']
 
-class BootstrapAddUnitForm(AddUnitForm):
+class UnitForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapAddUnitForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -80,6 +70,10 @@ class BootstrapAddUnitForm(AddUnitForm):
             'id': 'unit-name',
             'placeholder': 'Наименование'
         })
+
+    class Meta:
+        model = Unit
+        fields = ['name']
 
 class CategoryForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -97,14 +91,9 @@ class CategoryForm(ModelForm):
         model = Category
         fields = ['name']
 
-class AddItemForm(ModelForm):
-    class Meta:
-        model = Item
-        fields = ['manufacturer', 'article', 'category', 'description', 'unit']
-
-class BootstrapAddItemForm(AddItemForm):
+class ItemForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapAddItemForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -129,6 +118,10 @@ class BootstrapAddItemForm(AddItemForm):
             'id': 'unit_name',
             'placeholder': 'Ед. изм.'
         })
+
+    class Meta:
+        model = Item
+        fields = ['manufacturer', 'article', 'category', 'description', 'unit']
 
 class ContractForm(ModelForm):
 
@@ -177,26 +170,17 @@ class SupplyForm(ModelForm):
         model = Supply
         fields = ['date', 'contract', 'description']
 
-class BootstrapSupplyForm(SupplyForm):
+class CompanyForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BootstrapSupplyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
 
-class CompanyForm(ModelForm):
     class Meta:
         model = Company
         fields = ['name']
-
-class BootstrapCompanyForm(CompanyForm):
-    def __init__(self, *args, **kwargs):
-        super(BootstrapCompanyForm, self).__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control'
-            })
 
 class ItemInSupplyForm(ModelForm):
     def __init__(self, *args, **kwargs):

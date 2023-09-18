@@ -13,9 +13,9 @@ def storage(request):
     storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
                                                      'item__description', output_field=CharField()))
     storage = storage.values('full_item_name', unit=F('item__unit__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
-    filter_form = BootstrapStorageFilterForm()
+    filter_form = StorageFilterForm()
     if request.method == 'POST':
-        filter_form = BootstrapStorageFilterForm(request.POST)
+        filter_form = StorageFilterForm(request.POST)
         params = request.POST
         if params['category']:
             storage = storage.filter(item__category__id=params['category'])
@@ -29,11 +29,11 @@ def storage(request):
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
     if (request.method == 'POST'):
-        add_manufacturer_form = BootstrapAddManufacturerForm(request.POST)
+        add_manufacturer_form = ManufacturerForm(request.POST)
         if add_manufacturer_form.is_valid():
             add_manufacturer_form.save()
     else:
-        add_manufacturer_form = BootstrapAddManufacturerForm()
+        add_manufacturer_form = ManufacturerForm()
     return render(request,
                   'manufacturers.html',
                   {'manufacturers': manufacturers,
@@ -42,7 +42,7 @@ def manufacturers(request):
 def edit_manufacturer(request, id=None):
     manufacturer = get_object_or_404(Manufacturer, pk=id)
     if (request.method == 'POST'):
-        edit_manufacturer_form = BootstrapAddManufacturerForm(request.POST, instance=manufacturer)
+        edit_manufacturer_form = ManufacturerForm(request.POST, instance=manufacturer)
         if edit_manufacturer_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -54,7 +54,7 @@ def edit_manufacturer(request, id=None):
                              edit_manufacturer_form.errors.as_data())
         return redirect('/manufacturers/')
     else:
-        edit_manufacturer_form = BootstrapAddManufacturerForm(instance=manufacturer)
+        edit_manufacturer_form = ManufacturerForm(instance=manufacturer)
         return render(request,
                       'edit_manufacturer.html',
                       {'edit_manufacturer_form': edit_manufacturer_form,
@@ -76,11 +76,11 @@ def delete_manufacturer(request, id=None):
 def units(request):
     units = Unit.objects.all()
     if (request.method == 'POST'):
-        add_unit_form = BootstrapAddUnitForm(request.POST)
+        add_unit_form = UnitForm(request.POST)
         if add_unit_form.is_valid():
             add_unit_form.save()
     else:
-        add_unit_form = BootstrapAddUnitForm()
+        add_unit_form = UnitForm()
     return render(request,
                   'units.html',
                   {'units': units,
@@ -89,7 +89,7 @@ def units(request):
 def edit_unit(request, id=None):
     unit = get_object_or_404(Unit, pk=id)
     if (request.method == 'POST'):
-        edit_unit_form = BootstrapAddUnitForm(request.POST, instance=unit)
+        edit_unit_form = UnitForm(request.POST, instance=unit)
         if edit_unit_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -101,7 +101,7 @@ def edit_unit(request, id=None):
                              edit_unit_form.errors.as_data())
         return redirect('/units/')
     else:
-        edit_unit_form = BootstrapAddUnitForm(instance=unit)
+        edit_unit_form = UnitForm(instance=unit)
         return render(request,
                       'edit_unit.html',
                       {'edit_unit_form': edit_unit_form,
@@ -180,7 +180,7 @@ def delete_category(request, id=None):
 def items(request):
     items = Item.objects.all()
     if (request.method == 'POST'):
-        add_item_form = BootstrapAddItemForm(request.POST)
+        add_item_form = ItemForm(request.POST)
         if add_item_form.is_valid:
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -188,7 +188,7 @@ def items(request):
             add_item_form.save()
             return redirect('/items/')
     else:
-        add_item_form = BootstrapAddItemForm()
+        add_item_form = ItemForm()
     return render(request,
                   'items.html',
                   {'items': items,
@@ -197,7 +197,7 @@ def items(request):
 def edit_item(request, id=None):
     item = get_object_or_404(Item, pk=id)
     if (request.method == 'POST'):
-        edit_item_form = BootstrapAddItemForm(request.POST, instance=item)
+        edit_item_form = ItemForm(request.POST, instance=item)
         if edit_item_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -209,7 +209,7 @@ def edit_item(request, id=None):
                              edit_item_form.errors.as_data())
         return redirect('/items/')
     else:
-        edit_item_form = BootstrapAddItemForm(instance=item)
+        edit_item_form = ItemForm(instance=item)
     return render(request,
                   'edit_item.html',
                   {'edit_item_form': edit_item_form,
@@ -230,7 +230,7 @@ def delete_item(request, id=None):
 
 def user_login(request):
     if request.method == 'POST':
-        form = BootstrapLoginForm(request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             user = authenticate(username=cd['username'], password=cd['password'])
@@ -245,7 +245,7 @@ def user_login(request):
                                      messages.ERROR,
                                      'Неправильное имя пользователя или пароль')
     else:
-        form = BootstrapLoginForm()
+        form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
 def user_logout(request):
@@ -310,7 +310,7 @@ def supplies(request):
 
 def add_supply(request):
     if (request.method == 'POST'):
-        add_supply_form = BootstrapSupplyForm(request.POST)
+        add_supply_form = SupplyForm(request.POST)
         if add_supply_form.is_valid:
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -318,7 +318,7 @@ def add_supply(request):
             add_supply_form.save()
             return redirect('/supplies/')
     else:
-        add_supply_form = BootstrapSupplyForm()
+        add_supply_form = SupplyForm()
     return render(request,
                   'add_supply.html',
                   {'add_supply_form': add_supply_form})
@@ -326,7 +326,7 @@ def add_supply(request):
 def edit_supply(request, id=False):
     supply = get_object_or_404(Supply, pk=id)
     if (request.method == 'POST'):
-        edit_supply_form = BootstrapSupplyForm(request.POST, instance=supply)
+        edit_supply_form = SupplyForm(request.POST, instance=supply)
         if edit_supply_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -338,7 +338,7 @@ def edit_supply(request, id=False):
                              edit_supply_form.errors.as_data())
         return redirect('/supplies/')
     else:
-        edit_supply_form = BootstrapSupplyForm(instance=supply)
+        edit_supply_form = SupplyForm(instance=supply)
         edit_supply_form.fields['contract'].widget.attrs['readonly'] = True
     return render(request,
                   'edit_supply.html',
