@@ -75,16 +75,28 @@ def delete_manufacturer(request, id=None):
 
 def units(request):
     units = Unit.objects.all()
+    return render(request,
+                  'units.html',
+                  {'units': units})
+
+def add_unit(request):
     if (request.method == 'POST'):
         add_unit_form = UnitForm(request.POST)
         if add_unit_form.is_valid():
             add_unit_form.save()
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Ед. изм. успешно добавлена')
+            return redirect('/units/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_unit_form.errors.as_data())
+        return redirect('/units/')
     else:
         add_unit_form = UnitForm()
     return render(request,
-                  'units.html',
-                  {'units': units,
-                   'add_unit_form': add_unit_form})
+                  'add_unit.html',
+                  {'add_unit_form': add_unit_form})
 
 def edit_unit(request, id=None):
     unit = get_object_or_404(Unit, pk=id)
