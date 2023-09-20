@@ -1,0 +1,90 @@
+{% extends "main.html" %}
+
+{% block title %} Поставки {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block supply_link_active %} class="nav-link active" {% endblock supply_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-primary me-1 add-company" title="Добавить">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Наименование</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for company in companies %}
+    <tr>
+      <td class="align-middle">{{ company.name }}</td>
+      <td class="text-center">
+        <a class="btn btn-success text-center edit-company" title="Изменить" data-pk="{{ company.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-success text-center delete-company" title="Удалить" data-pk="{{ company.pk }}" data-name="{{ company.name }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.add-company').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/companies/add/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.add-modal').html(data);
+        }
+      }).done(function () {
+        $('#add-company').modal('show');
+      });
+    });
+    $('.edit-company').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/companies/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-company').modal('show');
+      });
+    });
+    $('.delete-company').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/companies/delete/' + pk + '/';
+      console.log('url for delete supply = ' + url);
+      $('#delete-company .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-company .message').html('Удалить фирму "' + name + '"?');
+      $('#delete-company').modal('show');
+    });
+  });
+</script>
+<div class="add-modal"></div>
+<div class="edit-modal"></div>
+{% include 'delete_company.html' %}
+{% endblock content %}

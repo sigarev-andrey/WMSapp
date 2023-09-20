@@ -1,0 +1,23 @@
+<div class="modal fade" id="edit-company" tabindex="-1" aria-labelledby="edit-company-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="edit-company-label">Редактирование фирмы</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'storage:edit-company' id %}" method="POST" class="form">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            {{ edit_company_form.name }}
+            <label for="company-name">Наименование</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-outline-success">Изменить</button>
+          <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

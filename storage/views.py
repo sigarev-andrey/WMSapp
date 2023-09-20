@@ -189,6 +189,67 @@ def delete_category(request, id=None):
                              e)
     return redirect('/categories/')
 
+def companies(request):
+    companies = Company.objects.all()
+    return render(request,
+                  'companies.html',
+                  {'companies': companies})
+
+def add_company(request):
+    if (request.method == 'POST'):
+        add_company_form = CompanyForm(request.POST)
+        if add_company_form.is_valid():
+            print('form is valid')
+            add_company_form.save()
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Фирма успешно добавлена')
+            return redirect('/companies/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_company_form.errors.as_data())
+        return redirect('/companies/')
+    else:
+        add_company_form = CompanyForm()
+        print('form created')
+    return render(request,
+                  'add_company.html',
+                  {'add_company_form': add_company_form})
+
+def edit_company(request, id=None):
+    company = get_object_or_404(Company, pk=id)
+    if (request.method == 'POST'):
+        edit_company_form = CompanyForm(request.POST, instance=company)
+        if edit_company_form.is_valid():
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Фирма изменена')
+            edit_company_form.save()
+            return redirect('/companies/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             edit_company_form.errors.as_data())
+        return redirect('/companies/')
+    else:
+        edit_company_form = CompanyForm(instance=company)
+        return render(request,
+                      'edit_company.html',
+                      {'edit_company_form': edit_company_form,
+                       'id': id})
+    
+def delete_company(request, id=None):
+    company = get_object_or_404(Company, pk=id)
+    try:
+        company.delete()
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             'Фирма удалена')
+    except Exception as e:
+        messages.add_message(request,
+                             messages.ERROR,
+                             e)
+    return redirect('/companies/')
+
 def items(request):
     items = Item.objects.all()
     if (request.method == 'POST'):

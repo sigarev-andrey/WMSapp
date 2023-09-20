@@ -110,5 +110,17 @@ class Staff(models.Model):
 class Company(models.Model):
     name = models.CharField(max_length=250)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                Lower('name'),
+                name=('unique_company_name')
+            )
+        ]
+        ordering = ['name']
+        indexes = [
+            models.Index(fields=['name'])
+        ]
+
     def __str__(self) -> str:
         return self.name
