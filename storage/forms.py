@@ -217,3 +217,22 @@ class StaffForm(ModelForm):
     class Meta:
         model = Staff
         fields = ['name', 'surname', 'patronymic']
+
+class ReleaseForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+        self.fields['date'].widget = forms.widgets.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={
+                'type': 'date',
+                'class': 'form-control'
+            }
+        )
+    
+    class Meta:
+        model = Release
+        fields = ['date', 'contract', 'staff', 'company', 'description']

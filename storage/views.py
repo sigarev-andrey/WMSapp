@@ -544,3 +544,63 @@ def delete_staff(request, id=False):
                              messages.ERROR,
                              e)
     return redirect('/staff/')
+
+def releases(request):
+    releases = Release.objects.all()
+    return render(request,
+                  'releases.html',
+                  {'releases': releases})
+
+def add_release(request):
+    if (request.method == 'POST'):
+        add_release_form = ReleaseForm(request.POST)
+        if add_release_form.is_valid:
+            add_release_form.save()
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Выдача успешно добавлена')
+            return redirect('/releases/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_release_form.errors.as_data())
+        return redirect('/releases/')
+    else:
+        add_release_form = ReleaseForm()
+    return render(request,
+                  'add_release.html',
+                  {'add_release_form': add_release_form})
+
+def edit_release(request, id=None):
+    release = get_object_or_404(Release, pk=id)
+    if (request.method == 'POST'):
+        edit_release_form = ReleaseForm(request.POST, instance=release)
+        if edit_release_form.is_valid():
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Выдача успешно изменена')
+            edit_release_form.save()
+            return redirect('/releases/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             edit_release_form.errors.as_data())
+        return redirect('/releases/')
+    else:
+        edit_release_form = ReleaseForm(instance=release)
+        edit_release_form.fields['contract'].widget.attrs['readonly'] = True
+    return render(request,
+                  'edit_release.html',
+                  {'edit_release_form': edit_release_form,
+                   'id': id})
+
+def delete_release(request, id=None):
+    release = get_object_or_404(Release, pk=id)
+    try:
+        release.delete()
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             'Поставка удалена')
+    except Exception as e:
+        messages.add_message(request,
+                             messages.ERROR,
+                             e)
+    return redirect('/releases/')

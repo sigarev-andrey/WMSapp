@@ -124,3 +124,17 @@ class Company(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+class Release(models.Model):
+    date = models.DateField()
+    contract = models.ForeignKey(Contract,
+                                 on_delete=models.PROTECT)
+    staff = models.ForeignKey(Staff,
+                              on_delete=models.PROTECT)
+    company = models.ForeignKey(Company,
+                                on_delete=models.PROTECT)
+    description = models.TextField()
+    
+    class Meta:
+        unique_together = ('date', 'contract', 'staff', 'company')
+        ordering = ['date']

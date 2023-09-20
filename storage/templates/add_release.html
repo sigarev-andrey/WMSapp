@@ -1,0 +1,39 @@
+<div class="modal fade" id="add-release" tabindex="-1" aria-labelledby="add-release-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="add-release-label">Добавление выдачи</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'storage:add-release' %}" method="POST" class="form">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            {{ add_release_form.date }}
+            <label for="release_name">Дата</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_release_form.contract }}
+            <label for="release_contract">Договор</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_release_form.staff }}
+            <label for="release_staff">ФИО</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_release_form.company }}
+            <label for="release_company">Фирма</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ add_release_form.description }}
+            <label for="release_description">Описание</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-inline-success">Добавить</button>
+          <button type="button" class="btn btn-inline-secondary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

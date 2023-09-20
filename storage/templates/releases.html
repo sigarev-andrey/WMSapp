@@ -1,0 +1,102 @@
+{% extends "main.html" %}
+
+{% block title %} Ед. изм. {% endblock title %}
+
+{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
+{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
+{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
+{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
+
+{% block buttons %}
+<button type="button" class="btn btn-outline-primary me-1 add-release" title="Добавить">
+  <i class="fa fa-plus"></i>
+</button>
+{% endblock buttons %}
+
+{% block content %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Дата</th>
+      <th>Договор</th>
+      <th>ФИО, фирма</th>
+      <th>Описание</th>
+      <th class="text-center" style="width: 10%;">Подробно</th>
+      <th class="text-center" style="width: 10%;">Изменить</th>
+      <th class="text-center" style="width: 10%;">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for release in releases %}
+    <tr>
+      <td class="align-middle">{{ release.date }}</td>
+      <td class="align-middle">{{ release.contract }}</td>
+      <td class="align-middle">{{ release.staff }} {{ release.company }}</td>
+      <td class="align-middle">{{ release.description }}</td>
+      <td class="text-center">
+        <a class="btn btn-outline-success text-center open-release" title="Подробно" href="">
+          <i class="fa fa-search"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-outline-success text-center edit-release" title="Изменить" data-pk="{{ release.pk }}">
+          <i class="fa fa-edit"></i>
+        </a>
+      </td>
+      <td class="text-center">
+        <a class="btn btn-outline-success text-center delete-release" title="Удалить" data-pk="{{ release.pk }}" data-name="{{ release.date }} {{ release.contract }}">
+          <i class="fa fa-trash"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $('document').ready(function () {
+    $('.add-release').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/releases/add/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.add-modal').html(data);
+        }
+      }).done(function () {
+        $('#add-release').modal('show');
+      });
+    });
+    $('.edit-release').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      console.log(pk);
+      $.ajax({
+        url: '/releases/edit/' + pk + '/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.edit-modal').html(data);
+        }
+      }).done(function () {
+        $('#edit-release').modal('show');
+      });
+    });
+    $('.delete-release').on('click', function (e) {
+      e.preventDefault();
+      pk = $(this).data('pk');
+      name = $(this).data('name');
+      console.log(pk);
+      url = '/releases/delete/' + pk + '/';
+      console.log('url for delete unit = ' + url);
+      $('#delete-release .form').attr('action', url);
+      console.log('delete form action changed')
+      $('#delete-release .message').html('Удалить поставку "' + name + '"?');
+      $('#delete-release').modal('show');
+    });
+  });
+</script>
+<div class="add-modal"></div>
+<div class="edit-modal"></div>
+{% include 'delete_release.html' %}
+{% endblock content %}
