@@ -60,7 +60,6 @@
         url: '/releases/add/',
         type: 'GET',
         success: function (data) {
-          console.log(data);
           $('.add-modal').html(data);
         }
       }).done(function () {
@@ -70,12 +69,10 @@
     $('.edit-release').on('click', function (e) {
       e.preventDefault();
       pk = $(this).data('pk');
-      console.log(pk);
       $.ajax({
         url: '/releases/edit/' + pk + '/',
         type: 'GET',
         success: function (data) {
-          console.log(data);
           $('.edit-modal').html(data);
         }
       }).done(function () {
@@ -86,11 +83,8 @@
       e.preventDefault();
       pk = $(this).data('pk');
       name = $(this).data('name');
-      console.log(pk);
       url = '/releases/delete/' + pk + '/';
-      console.log('url for delete unit = ' + url);
       $('#delete-release .form').attr('action', url);
-      console.log('delete form action changed')
       $('#delete-release .message').html('Удалить поставку "' + name + '"?');
       $('#delete-release').modal('show');
     });

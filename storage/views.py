@@ -573,7 +573,9 @@ def add_release(request):
 def edit_release(request, id=None):
     release = get_object_or_404(Release, pk=id)
     if (request.method == 'POST'):
-        edit_release_form = ReleaseForm(request.POST, instance=release)
+        POST = request.POST.copy()
+        POST['contract'] = release.contract
+        edit_release_form = ReleaseForm(POST, instance=release)
         if edit_release_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
@@ -586,7 +588,7 @@ def edit_release(request, id=None):
         return redirect('/releases/')
     else:
         edit_release_form = ReleaseForm(instance=release)
-        edit_release_form.fields['contract'].widget.attrs['readonly'] = True
+        edit_release_form.fields['contract'].widget.attrs['disabled'] = True
     return render(request,
                   'edit_release.html',
                   {'edit_release_form': edit_release_form,
