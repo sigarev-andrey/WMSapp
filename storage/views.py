@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from .models import Storage, Category, Manufacturer, Unit
 from django.db import transaction
 from django.db.models import CharField, Value, Sum, F
@@ -606,3 +606,47 @@ def delete_release(request, id=None):
                              messages.ERROR,
                              e)
     return redirect('/releases/')
+
+def details_release(request, id=None):
+    release = get_object_or_404(Release, pk=id)
+    items = ItemInRelease.objects.filter(release=release.pk)
+    return render(request,
+                  'details_release.html',
+                  {'release': release,
+                   'items': items})
+
+@transaction.atomic
+def add_item_in_release(request, id):
+    release = get_object_or_404(Release, pk=id)
+    if (request.method == 'POST'):
+        add_item_in_release_form = ItemInReleaseForm(request.POST)
+        if add_item_in_release_form.is_valid():
+            add_item_in_release_form.instance.release = release
+            item = add_item_in_release_form.cleaned_data['item']
+            if item.count < add_item_in_release_form.cleaned_data['count']:
+                messages.add_message(request,
+                                     messages.ERROR,
+                                     'Кол-во выдачи не должно превышать ' + str(item.count))
+                return redirect('/releases/details/' + str(id) + '/')
+            item.count -= add_item_in_release_form.cleaned_data['count']
+            item.save()
+            item_in_release, create = ItemInRelease.objects.get_or_create(item=add_item_in_release_form.cleaned_data['item'],
+                                                                          release=release,
+                                                                          defaults={'count': add_item_in_release_form.cleaned_data['count']})
+            if not create:
+                item_in_release.count += add_item_in_release_form.cleaned_data['count']
+            item_in_release.save()
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Позиция успешно добавлена')
+            return redirect('/releases/details/' + str(id) + '/')
+        messages.add_message(request,
+                 messages.ERROR,
+                 add_item_in_release_form.errors.as_data())
+        return redirect('/releases/details/' + str(id) + '/')
+    else:
+        add_item_in_release_form = ItemInReleaseForm()
+    return render(request,
+                    'add_item_in_release.html',
+                    {'add_item_in_release_form': add_item_in_release_form,
+                     'id': id})

@@ -34,7 +34,7 @@
       <td class="align-middle">{{ release.staff }} {{ release.company }}</td>
       <td class="align-middle">{{ release.description }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center open-release" title="Подробно" href="">
+        <a class="btn btn-outline-success text-center open-release" title="Подробно" href="{% url 'storage:details-release' release.pk %}">
           <i class="fa fa-search"></i>
         </a>
       </td>

@@ -82,7 +82,7 @@ class Storage(models.Model):
         unique_together = ('item', 'contract')
 
     def __str__(self) -> str:
-        return self.item.manufacturer.name + " " + self.item.article + " " + self.item.description
+        return self.item.manufacturer.name + " " + self.item.article + " " + self.contract.short_number + " " + str(self.count)
 
 class Supply(models.Model):
     date = models.DateField()
@@ -134,7 +134,19 @@ class Release(models.Model):
     company = models.ForeignKey(Company,
                                 on_delete=models.PROTECT)
     description = models.TextField()
+    items = models.ManyToManyField(Storage, through='ItemInRelease')
     
     class Meta:
         unique_together = ('date', 'contract', 'staff', 'company')
         ordering = ['date']
+
+class ItemInRelease(models.Model):
+    item = models.ForeignKey(Storage,
+                             on_delete=models.PROTECT)
+    release = models.ForeignKey(Release,
+                                on_delete=models.PROTECT)
+    count = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('item', 'release')
+        ordering = ['item']

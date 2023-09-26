@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django import forms
 from django.forms import ModelForm
 from .models import *
@@ -236,3 +237,18 @@ class ReleaseForm(ModelForm):
     class Meta:
         model = Release
         fields = ['date', 'contract', 'staff', 'company', 'description']
+
+class ItemInReleaseForm(ModelForm):
+
+    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+            
+    class Meta:
+        model = ItemInRelease
+        exclude = ['release']
