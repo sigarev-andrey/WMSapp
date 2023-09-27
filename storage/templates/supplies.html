@@ -8,7 +8,7 @@
 {% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1 add-supply" title="Добавить">
+<button type="button" class="btn btn-outline-primary me-1 add-supply" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
@@ -32,17 +32,17 @@
       <td class="align-middle">{{ supply.contract }}</td>
       <td class="align-middle">{{ supply.description }}</td>
       <td class="text-center">
-        <a class="btn btn-success text-center open-supply" title="Подробно" href="{% url 'storage:details-supply' supply.pk %}">
+        <a class="btn btn-outline-success text-center open-supply" title="Подробно" href="{% url 'storage:details-supply' supply.pk %}">
           <i class="fa fa-search"></i>
         </a>
       </td>
       <td class="text-center">
-        <a class="btn btn-success text-center edit-supply" title="Изменить" data-pk="{{ supply.pk }}">
+        <a class="btn btn-outline-success text-center edit-supply" title="Изменить" data-pk="{{ supply.pk }}">
           <i class="fa fa-edit"></i>
         </a>
       </td>
       <td class="text-center">
-        <a class="btn btn-success text-center delete-supply" title="Удалить" data-pk="{{ supply.pk }}" data-name="{{ supply.date }} {{ supply.contract }}">
+        <a class="btn btn-outline-success text-center delete-supply" title="Удалить" data-pk="{{ supply.pk }}" data-name="{{ supply.date }} {{ supply.contract }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>

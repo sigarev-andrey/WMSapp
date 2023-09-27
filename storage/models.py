@@ -62,12 +62,18 @@ class Item(models.Model):
 
 class Contract(models.Model):
     short_number = models.CharField(max_length=250)
-    full_number = models.CharField(max_length=250, unique=True)
-    date = models.DateField()
-    description = models.TextField()
+    full_number = models.CharField(max_length=250, blank=True)
+    date = models.DateField(null=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('short_number', 'full_number', 'date')
 
     def __str__(self) -> str:
-        return self.short_number + ' от ' + self.date.strftime('%d.%m.%Y')
+        str = self.short_number
+        if self.date:
+            str += ' от ' + self.date.strftime('%d.%m.%Y')
+        return str
     
 class Storage(models.Model):
     item = models.ForeignKey(Item,
@@ -89,7 +95,7 @@ class Supply(models.Model):
     contract = models.ForeignKey(Contract,
                                  on_delete=models.PROTECT,
                                  related_name='supply_contract')
-    description = models.TextField()
+    description = models.TextField(blank=True)
     items = models.ManyToManyField(Item, through='ItemInSupply')
 
 class ItemInSupply(models.Model):
@@ -133,7 +139,7 @@ class Release(models.Model):
                               on_delete=models.PROTECT)
     company = models.ForeignKey(Company,
                                 on_delete=models.PROTECT)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     items = models.ManyToManyField(Storage, through='ItemInRelease')
     
     class Meta:

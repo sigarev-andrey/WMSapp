@@ -8,30 +8,34 @@
 {% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1 add-item" title="Добавить">
+<button type="button" class="btn btn-outline-primary me-1 add-item" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
 
 {% block content %}
-<p>Поставка от {{supply.date|date:'d.m.Y'}} по договору №{{supply.contract}} {{supply.description}}</p>
-<table class="table">
+{% if supply.contract.short_number == "Без договора" %}
+  <p>Поставка от {{supply.date|date:'d.m.Y'}} <b>{{supply.contract}}</b></p>
+{% else %}
+  <p>Поставка от {{supply.date|date:'d.m.Y'}} по договору <b>№{{supply.contract}}</b> {{supply.description}}</p>
+{% endif %}
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Наименование</th>
-      <th>Ед. изм.</th>
-      <th>Кол-во</th>
+      <th class="text-center">Ед. изм.</th>
+      <th class="text-center">Кол-во</th>
       <th class="text-center" style="width: 10%;">Удалить</th>
     </tr>
   </thead>
   <tbody>
     {% for item in items %}
     <tr>
-      <td>{{ item.item }}</td>
-      <td>{{ item.item.unit }}</td>
-      <td>{{ item.count }}</td>
+      <td class="align-middle">{{ item.item }}</td>
+      <td class="align-middle text-center">{{ item.item.unit }}</td>
+      <td class="align-middle text-center">{{ item.count }}</td>
       <td class="text-center">
-        <a class="btn btn-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
+        <a class="btn btn-outline-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>

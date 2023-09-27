@@ -37,7 +37,7 @@
     <tr>
       <td>{{ contract.short_number }}</td>
       <td>{{ contract.full_number }}</td>
-      <td>{{ contract.date }}</td>
+      <td>{{ contract.date|default_if_none:'' }}</td>
       <td>{{ contract.description }}</td>
       <td class="text-center">
         <a class="btn btn-success text-center edit-contract" title="Изменить" data-pk="{{ contract.pk }}">

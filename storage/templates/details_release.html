@@ -8,13 +8,17 @@
 {% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1 add-item" title="Добавить">
+<button type="button" class="btn btn-outline-primary me-1 add-item" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
 
 {% block content %}
-<p>Выдача от {{release.date|date:'d.m.Y'}} по договору №{{release.contract}} {{release.description}}</p>
+{% if release.contract.short_number == "Без договора" %}
+  <p>Выдача от {{release.date|date:'d.m.Y'}} <b>{{release.contract}}</b></p>
+{% else %}
+  <p>Выдача от {{release.date|date:'d.m.Y'}} по договору <b>№{{release.contract}}</b> {{release.description}}</p>
+{% endif %}
 <table class="table table-striped">
   <thead>
     <tr>
@@ -33,7 +37,7 @@
       <td class="align-middle text-center">{{ item.item.item.unit }}</td>
       <td class="align-middle text-center">{{ item.count }}</td>
       <td class="align-middle text-center">
-        <a class="btn btn-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
+        <a class="btn btn-outline-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>
