@@ -8,9 +8,19 @@
         <form action="{% url 'storage:add-item-in-release' id %}" method="POST" class="form">
           <div class="modal-body">
             {% csrf_token %}
-            <div class="form-floating mb-3">
+            <!--<div class="form-floating mb-3">
               {{ add_item_in_release_form.item }}
               <label for="short_number">Позиция</label>
+            </div>-->
+
+            <div class="mb-3">
+              <label class="form-label">Позиция</label>
+              <input class="form-select" placeholder="--- Наименование ---" name="item" type="text" list="items">
+              <datalist id="items">
+                {% for i in add_item_in_release_form.fields.item.queryset %}
+                  <option value="{{ i.id }}">{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}</option>
+                {% endfor %}
+              </datalist>
             </div>
             <div class="form-floating mb-3">
               {{ add_item_in_release_form.count }}
@@ -18,8 +28,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Добавить</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+            <button type="submit" class="btn btn-outline-success">Добавить</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
           </div>
         </form>
       </div>

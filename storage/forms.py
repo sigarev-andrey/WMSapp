@@ -240,7 +240,8 @@ class ReleaseForm(ModelForm):
 
 class ItemInReleaseForm(ModelForm):
 
-    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False)
+    #for future usage for filtering items by contract
+    #contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
