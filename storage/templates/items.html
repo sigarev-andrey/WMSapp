@@ -51,6 +51,32 @@
     {% endfor %}
   </tbody>
 </table>
+
+<!--Pagination-->
+{% if items.has_other_pages %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if items.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">Пред.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
+      {% endif %}
+      {% for p in items.paginator.page_range %}
+        {% if items.number == p %}
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if items.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">След.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
 <script>
   $('document').ready(function () {
     $('.edit-item').on('click', function (e) {

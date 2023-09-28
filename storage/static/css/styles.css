@@ -1,3 +1,9 @@
+/*Main body*/
+body {
+  background-color: #EDECE6;
+}
+/*----------------------------*/
+
 /*Bootstrap alerts*/
 .alert-danger {
     position:fixed; 
@@ -30,7 +36,6 @@
     color: #00386C;
     border-color:#00386C;
 }
-
 .btn-outline-primary:hover {
     border-color:#00386C;
     background-color: #00386C;
@@ -39,7 +44,6 @@
   color: #F24236;
   border-color:#F24236;
 }
-
 .btn-outline-danger:hover {
   border-color:#F24236;
   background-color: #F24236;
@@ -48,7 +52,6 @@
   color: #1EC740;
   border-color:#1EC740;
 }
-
 .btn-outline-success:hover {
   border-color:#1EC740;
   background-color: #1EC740;
@@ -203,6 +206,30 @@
 }
 /*-----------------------------------------------------------------------*/
 
-body {
-    background-color: #EDECE6;
+/*Bootstrap pagination*/
+.pagination > li > a
+{
+    background-color: #00386C;
+    color: #EDECE6;
 }
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #00386C;
+    background-color: #eee;
+    border-color: #00386C;
+}
+.pagination > .active > a
+{
+    background-color: #EDECE6 !Important;
+    border: solid 1px #00386C !Important;
+    color: #00386C !Important;
+}
+.pagination > .active > a:hover
+{
+    background-color: #EDECE6 !Important;
+    border: solid 1px #EDECE6;
+}
+/*-----------------------------------------*/

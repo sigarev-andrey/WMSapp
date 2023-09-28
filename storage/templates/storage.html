@@ -3,7 +3,8 @@
 {% block title %} Склад {% endblock title %}
 
 {% block buttons %}
-<button class="btn btn-outline-primary me-1" type="button" style="width: 40px;" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
+<button class="btn btn-outline-primary me-1" type="button" style="width: 40px;" data-bs-toggle="collapse"
+  data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
   <i class="fa fa-filter"></i>
 </button>
 {% endblock buttons %}
@@ -11,8 +12,8 @@
 {% block filters %}
 <form action="{%url 'storage:storage' %}" method="POST" class="form">
   {% csrf_token %}
-    <div class="form-floating mb-3">
-      {{ filter_form.text_filter }}
+  <div class="form-floating mb-3">
+    {{ filter_form.text_filter }}
     <label for="text_filter">Наименование</label>
   </div>
   <div class="form-floating mb-3">
@@ -24,24 +25,52 @@
 {% endblock filters %}
 
 {% block content %}
-  <div class="filter">
-  </div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Наименование</th>
-        <th style="text-align: center">Ед. изм.</th>
-        <th style="text-align: center">Кол-во</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in storage %}
-      <tr>
-        <td>{{item.full_item_name}}</td>
-        <td style="text-align: center">{{item.unit}}</td>
-        <td style="text-align: center">{{item.total_count}}</td>
-      </tr>
+<div class="filter">
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Наименование</th>
+      <th class="text-center">Категория</th>
+      <th class="text-center">Ед. изм.</th>
+      <th class="text-center">Кол-во</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in storage %}
+    <tr>
+      <td class="align-middle">{{item.full_item_name}}</td>
+      <td class="text-center align-middle">{{item.category}}</td>
+      <td class="text-center align-middle">{{item.unit}}</td>
+      <td class="text-center align-middle">{{item.total_count}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!--Pagination-->
+{% if storage.has_other_pages %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if storage.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ storage.previous_page_number }}">Пред.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
+      {% endif %}
+      {% for p in storage.paginator.page_range %}
+        {% if storage.number == p %}
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% endif %}
       {% endfor %}
-    </tbody>
-  </table>
+      {% if storage.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ storage.next_page_number }}">След.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
 {% endblock content %}

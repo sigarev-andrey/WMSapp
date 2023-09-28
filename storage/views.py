@@ -6,13 +6,17 @@ from django.db.models import CharField, Value, Sum, F
 from django.db.models.functions import Concat
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 from .forms import *
 
 def storage(request):
     storage = Storage.objects.all()
     storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
                                                      'item__description', output_field=CharField()))
-    storage = storage.values('full_item_name', unit=F('item__unit__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
+    storage = storage.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
+    paginator = Paginator(storage, 10)
+    page_number = request.GET.get('page')
+    page_storage = paginator.get_page(page_number)
     filter_form = StorageFilterForm()
     if request.method == 'POST':
         filter_form = StorageFilterForm(request.POST)
@@ -21,9 +25,12 @@ def storage(request):
             storage = storage.filter(item__category__id=params['category'])
         if params['text_filter']:
             storage = storage.filter(full_item_name__icontains=params['text_filter'])
+        paginator = Paginator(storage, 10)
+        page_number = request.GET.get('page')
+        page_storage = paginator.get_page(page_number)
     return render(request,
                   'storage.html',
-                  {'storage': storage,
+                  {'storage': page_storage,
                    'filter_form': filter_form})
 
 def manufacturers(request):
@@ -252,6 +259,9 @@ def delete_company(request, id=None):
 
 def items(request):
     items = Item.objects.all()
+    paginator = Paginator(items, 10)
+    page_number = request.GET.get('page')
+    page_items = paginator.get_page(page_number)
     if (request.method == 'POST'):
         add_item_form = ItemForm(request.POST)
         if add_item_form.is_valid:
@@ -264,7 +274,7 @@ def items(request):
         add_item_form = ItemForm()
     return render(request,
                   'items.html',
-                  {'items': items,
+                  {'items': page_items,
                    'add_item_form': add_item_form})
 
 def edit_item(request, id=None):
