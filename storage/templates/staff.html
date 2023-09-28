@@ -8,7 +8,7 @@
 {% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1 add-staff" title="Добавить">
+<button type="button" class="btn btn-outline-primary me-1 add-staff" style="width: 40px;" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
@@ -31,12 +31,12 @@
       <td class="align-middle">{{ person.name }}</td>
       <td class="align-middle">{{ person.patronymic }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center edit-staff" title="Изменить" data-pk="{{ person.pk }}">
+        <a class="btn btn-outline-success text-center edit-staff" style="width: 40px;" title="Изменить" data-pk="{{ person.pk }}">
           <i class="fa fa-edit"></i>
         </a>
       </td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-staff" title="Удалить" data-pk="{{ person.pk }}" data-name="{{ person }}">
+        <a class="btn btn-outline-success text-center delete-staff" style="width: 40px;" title="Удалить" data-pk="{{ person.pk }}" data-name="{{ person }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>

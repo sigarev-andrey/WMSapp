@@ -8,13 +8,13 @@
 {% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1" title="Добавить" data-bs-toggle="modal" data-bs-target="#add-manufacturer">
+<button type="button" class="btn btn-outline-primary me-1" style="width: 40px;" title="Добавить" data-bs-toggle="modal" data-bs-target="#add-manufacturer">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
 
 {% block content %}
-<table class="table">
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Наименование</th>
@@ -25,14 +25,14 @@
   <tbody>
     {% for manufacturer in manufacturers %}
     <tr>
-      <td>{{ manufacturer.name }}</td>
-      <td class="text-center">
-        <a class="btn btn-success text-center edit-manufacturer" title="Изменить" data-pk="{{ manufacturer.pk }}">
+      <td class="align-middle">{{ manufacturer.name }}</td>
+      <td class="text-center align-middle">
+        <a class="btn btn-outline-success text-center edit-manufacturer" style="width: 40px;" title="Изменить" data-pk="{{ manufacturer.pk }}">
           <i class="fa fa-edit"></i>
         </a>
       </td>
-      <td class="text-center">
-        <a class="btn btn-success text-center delete-manufacturer" title="Удалить" data-pk="{{ manufacturer.pk }}"
+      <td class="text-center align-middle">
+        <a class="btn btn-outline-success text-center delete-manufacturer" style="width: 40px;" title="Удалить" data-pk="{{ manufacturer.pk }}"
           data-name="{{ manufacturer.name }}">
           <i class="fa fa-trash"></i>
         </a>

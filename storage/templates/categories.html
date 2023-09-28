@@ -8,7 +8,7 @@
 {% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1" title="Добавить" data-bs-toggle="modal"
+<button type="button" class="btn btn-outline-primary me-1" style="width: 40px;" title="Добавить" data-bs-toggle="modal"
   data-bs-target="#add-category">
   <i class="fa fa-plus"></i>
 </button>
@@ -40,12 +40,12 @@
     <tr>
       <td class="align-middle">{{ category.name }}</td>
       <td class="text-center">
-        <a href="" class="btn btn-success text-center edit-category" title="Изменить" data-pk="{{ category.pk }}">
+        <a href="" class="btn btn-outline-success text-center edit-category" style="width: 40px;" title="Изменить" data-pk="{{ category.pk }}">
           <i class="fa fa-edit"></i>
         </a>
       </td>
       <td class="text-center">
-        <a class="btn btn-success text-center delete-category" title="Удалить" data-pk="{{ category.pk }}"
+        <a class="btn btn-outline-success text-center delete-category" style="width: 40px;" title="Удалить" data-pk="{{ category.pk }}"
           data-name="{{ category.name }}">
           <i class="fa fa-trash"></i>
         </a>

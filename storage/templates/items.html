@@ -8,7 +8,7 @@
 {% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-primary me-1" data-bs-toggle="modal" data-bs-target="#add-item">
+<button type="button" class="btn btn-outline-primary me-1" style="width: 40px;" title="Добавить" data-bs-toggle="modal" data-bs-target="#add-item">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
@@ -20,7 +20,7 @@
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
-<table class="table">
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Наименование</th>
@@ -33,16 +33,16 @@
   <tbody>
     {% for item in items %}
     <tr>
-      <td>{{ item.manufacturer }} {{ item.article }} {{ item.description }}</td>
-      <td class="text-center">{{ item.category }}</td>
-      <td class="text-center">{{ item.unit }}</td>
-      <td class="text-center">
-        <a class="btn btn-success text-center edit-item" title="Изменить" data-pk="{{ item.pk }}">
+      <td class="align-middle">{{ item.manufacturer }} {{ item.article }} {{ item.description }}</td>
+      <td class="text-center align-middle">{{ item.category }}</td>
+      <td class="text-center align-middle">{{ item.unit }}</td>
+      <td class="text-center align-middle">
+        <a class="btn btn-outline-success text-center edit-item" title="Изменить" style="width: 40px;" data-pk="{{ item.pk }}">
           <i class="fa fa-edit"></i>
         </a>
       </td>
       <td class="text-center">
-        <a class="btn btn-success text-center delete-item" title="Удалить" data-pk="{{ item.pk }}"
+        <a class="btn btn-outline-success text-center delete-item" title="Удалить" style="width: 40px;" data-pk="{{ item.pk }}"
           data-name="{{ item.manufacturer }} {{ item.article }}">
           <i class="fa fa-trash"></i>
         </a>

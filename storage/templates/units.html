@@ -8,7 +8,7 @@
 {% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
 
 {% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-unit" title="Добавить">
+<button type="button" class="btn btn-outline-primary me-1 add-unit" style="width: 40px;" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
@@ -27,12 +27,12 @@
     <tr>
       <td class="align-middle">{{ unit.name }}</td>
       <td class="text-center">
-        <a class="btn btn-success text-center edit-unit" title="Изменить" data-pk="{{ unit.pk }}">
+        <a class="btn btn-outline-success text-center edit-unit" style="width: 40px;" title="Изменить" data-pk="{{ unit.pk }}">
           <i class="fa fa-edit"></i>
         </a>
       </td>
       <td class="text-center">
-        <a class="btn btn-success text-center delete-unit" title="Удалить" data-pk="{{ unit.pk }}" data-name="{{ unit.name }}">
+        <a class="btn btn-outline-success text-center delete-unit" title="Удалить" style="width: 40px;" data-pk="{{ unit.pk }}" data-name="{{ unit.name }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>
