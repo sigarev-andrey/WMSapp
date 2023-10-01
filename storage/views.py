@@ -9,29 +9,53 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
 from .forms import *
 
+def clean_filters(filters):
+    filters = {k: v for (k, v) in filters.items() if v}
+    return filters
+
 def storage(request):
     storage = Storage.objects.all()
     storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
                                                      'item__description', output_field=CharField()))
     storage = storage.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
+    filters = {
+        'item__category__id': request.GET.get('category'),
+        'full_item_name__icontains': request.GET.get('text_filter')
+    }
+    filters = clean_filters(filters)
+    if filters:
+        storage = storage.filter(**filters)
+    html_queries = {
+        'category': request.GET.get('category'),
+        'text_filter': request.GET.get('text_filter'),
+    }
+    html_queries = clean_filters(html_queries)
     paginator = Paginator(storage, 10)
     page_number = request.GET.get('page')
     page_storage = paginator.get_page(page_number)
-    filter_form = StorageFilterForm()
+    filter_form = StorageFilterForm(initial=html_queries)
     if request.method == 'POST':
         filter_form = StorageFilterForm(request.POST)
-        params = request.POST
-        if params['category']:
-            storage = storage.filter(item__category__id=params['category'])
-        if params['text_filter']:
-            storage = storage.filter(full_item_name__icontains=params['text_filter'])
+        filters = {
+            'item__category__id': request.POST.get('category'),
+            'full_item_name__icontains': request.POST.get('text_filter')
+        }
+        filters = clean_filters(filters)
+        html_queries = {
+            'category': request.POST.get('category'),
+            'text_filter': request.POST.get('text_filter'),
+        }
+        html_queries = clean_filters(html_queries)
+        if filters:
+            storage = storage.filter(**filters)
         paginator = Paginator(storage, 10)
         page_number = request.GET.get('page')
         page_storage = paginator.get_page(page_number)
     return render(request,
                   'storage.html',
                   {'storage': page_storage,
-                   'filter_form': filter_form})
+                   'filter_form': filter_form,
+                   'filters': html_queries})
 
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
