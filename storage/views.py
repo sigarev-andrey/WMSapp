@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from .models import Storage, Category, Manufacturer, Unit
 from django.db import transaction
 from django.db.models import CharField, Value, Sum, F
 from django.db.models.functions import Concat
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator
 from .forms import *
 
@@ -13,6 +14,7 @@ def clean_filters(filters):
     filters = {k: v for (k, v) in filters.items() if v}
     return filters
 
+@permission_required('storage.view_storage')
 def storage(request):
     storage = Storage.objects.all()
     storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
@@ -57,19 +59,34 @@ def storage(request):
                    'filter_form': filter_form,
                    'filters': html_queries})
 
+@permission_required('storage.view_manufacturers')
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
+    return render(request,
+                  'manufacturers.html',
+                  {'manufacturers': manufacturers})
+
+@permission_required('storage.add_manufacturers')
+def add_manufacturer(request):
     if (request.method == 'POST'):
         add_manufacturer_form = ManufacturerForm(request.POST)
         if add_manufacturer_form.is_valid():
             add_manufacturer_form.save()
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 'Производитель успешно добавлен')
+            return redirect('/manufacturers/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_manufacturer_form.errors.as_data())
+        return redirect('/manufacturers/')
     else:
         add_manufacturer_form = ManufacturerForm()
     return render(request,
-                  'manufacturers.html',
-                  {'manufacturers': manufacturers,
-                   'add_manufacturer_form': add_manufacturer_form})
+                  'add_manufacturer.html',
+                  {'add_manufacturer_form': add_manufacturer_form})
 
+@permission_required('storage.edit_manufacturers')
 def edit_manufacturer(request, id=None):
     manufacturer = get_object_or_404(Manufacturer, pk=id)
     if (request.method == 'POST'):
@@ -77,7 +94,7 @@ def edit_manufacturer(request, id=None):
         if edit_manufacturer_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
-                                 'Ед. изм. успешно изменена')
+                                 'Произвоитель успешно изменен')
             edit_manufacturer_form.save()
             return redirect('/manufacturers/')
         messages.add_message(request,
@@ -91,6 +108,7 @@ def edit_manufacturer(request, id=None):
                       {'edit_manufacturer_form': edit_manufacturer_form,
                        'id': id})
     
+@permission_required('storage.delete_manufacturers')
 def delete_manufacturer(request, id=None):
     manufacturer = get_object_or_404(Manufacturer, pk=id)
     try:
@@ -104,6 +122,7 @@ def delete_manufacturer(request, id=None):
                              e)
     return redirect('/manufacturers/')
 
+@permission_required("storage.view_unit")
 def units(request):
     units = Unit.objects.all()
     return render(request,
@@ -186,6 +205,7 @@ def categories(request):
                   'categories.html',
                    context)
 
+@permission_required("storage.edit_category")
 def edit_category(request, id=None):
     category = get_object_or_404(Category, pk=id)
     if (request.method == 'POST'):

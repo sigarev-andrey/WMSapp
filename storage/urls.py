@@ -9,6 +9,7 @@ app_name = 'storage'
 urlpatterns = [
     path('storage/', views.storage, name='storage'),
     path('manufacturers/', views.manufacturers, name='manufacturers'),
+    path('manufacturers/add/', views.add_manufacturer, name='add-manufacturer'),
     path('manufacturers/edit/<int:id>/', views.edit_manufacturer, name='edit-manufacturer'),
     path('manufacturers/delete/<int:id>/', views.delete_manufacturer, name='delete-manufacturer'),
     path('units/', views.units, name='units'),
