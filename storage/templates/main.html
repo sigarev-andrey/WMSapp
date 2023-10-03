@@ -1,4 +1,5 @@
 {% load static %}
+{% load storage_extras %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,8 +25,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a {% block storage_link_active %} class="nav-link active" aria-current="page" {% endblock storage_link_active %} aria-current="page" href="/storage/">СКЛАД</a>
+              <a {% block storage_link_active %} class="nav-link" {% endblock storage_link_active %} aria-current="page" href="/storage/">СКЛАД</a>
             </li>
+            {% if not request.user|has_group:'guests' %}
             <li class="nav-item">
               <a {% block supply_link_active %} class="nav-link" {% endblock supply_link_active %} href="/supplies/">ПОСТАВКИ</a>
             </li>
@@ -45,6 +47,7 @@
                 <li><a class="dropdown-item" href="/staff/">Персонал</a></li>
                 <li><a class="dropdown-item" href="/companies/">Фирма</a></li>
               </ul>
+            {% endif %}
             </li>
           </ul>
         </div>      
