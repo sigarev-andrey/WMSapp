@@ -7,6 +7,7 @@ from django.conf import settings
 app_name = 'storage'
 
 urlpatterns = [
+    path('', views.storage),
     path('storage/', views.storage, name='storage'),
     path('manufacturers/', views.manufacturers, name='manufacturers'),
     path('manufacturers/add/', views.add_manufacturer, name='add-manufacturer'),
@@ -17,6 +18,7 @@ urlpatterns = [
     path('units/edit/<int:id>/', views.edit_unit, name='edit-unit'),
     path('units/delete/<int:id>/', views.delete_unit, name='delete-unit'),
     path('categories/', views.categories, name='categories'),
+    path('categories/add/', views.add_category, name='add-category'),
     path('categories/edit/<int:id>/', views.edit_category, name='edit-category'),
     path('categories/delete/<int:id>/', views.delete_category, name='delete-category'),
     path('companies/', views.companies, name='companies'),

@@ -59,14 +59,14 @@ def storage(request):
                    'filter_form': filter_form,
                    'filters': html_queries})
 
-@permission_required('storage.view_manufacturers')
+@permission_required('storage.view_manufacturer')
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
     return render(request,
                   'manufacturers.html',
                   {'manufacturers': manufacturers})
 
-@permission_required('storage.add_manufacturers')
+@permission_required('storage.add_manufacturer')
 def add_manufacturer(request):
     if (request.method == 'POST'):
         add_manufacturer_form = ManufacturerForm(request.POST)
@@ -86,7 +86,7 @@ def add_manufacturer(request):
                   'add_manufacturer.html',
                   {'add_manufacturer_form': add_manufacturer_form})
 
-@permission_required('storage.edit_manufacturers')
+@permission_required('storage.edit_manufacturer')
 def edit_manufacturer(request, id=None):
     manufacturer = get_object_or_404(Manufacturer, pk=id)
     if (request.method == 'POST'):
@@ -108,7 +108,7 @@ def edit_manufacturer(request, id=None):
                       {'edit_manufacturer_form': edit_manufacturer_form,
                        'id': id})
     
-@permission_required('storage.delete_manufacturers')
+@permission_required('storage.delete_manufacturer')
 def delete_manufacturer(request, id=None):
     manufacturer = get_object_or_404(Manufacturer, pk=id)
     try:
@@ -122,13 +122,14 @@ def delete_manufacturer(request, id=None):
                              e)
     return redirect('/manufacturers/')
 
-@permission_required("storage.view_unit")
+@permission_required('storage.view_unit')
 def units(request):
     units = Unit.objects.all()
     return render(request,
                   'units.html',
                   {'units': units})
 
+@permission_required('storage.add_unit')
 def add_unit(request):
     if (request.method == 'POST'):
         add_unit_form = UnitForm(request.POST)
@@ -148,6 +149,7 @@ def add_unit(request):
                   'add_unit.html',
                   {'add_unit_form': add_unit_form})
 
+@permission_required('storage.edit_unit')
 def edit_unit(request, id=None):
     unit = get_object_or_404(Unit, pk=id)
     if (request.method == 'POST'):
@@ -168,7 +170,8 @@ def edit_unit(request, id=None):
                       'edit_unit.html',
                       {'edit_unit_form': edit_unit_form,
                        'id': id})
-    
+
+@permission_required('storage.delete_unit')    
 def delete_unit(request, id=None):
     unit = get_object_or_404(Unit, pk=id)
     try:
@@ -182,10 +185,15 @@ def delete_unit(request, id=None):
                              e)
     return redirect('/units/')
 
+@permission_required('storage.view_category')
 def categories(request):
-    context = {}
     categories = Category.objects.all()
-    context['categories'] = categories
+    return render(request,
+                  'categories.html',
+                   {'categories': categories})
+
+@permission_required('storage.add_category')
+def add_category(request):
     if (request.method == 'POST'):
         add_category_form = CategoryForm(request.POST)
         if add_category_form.is_valid():
@@ -200,10 +208,9 @@ def categories(request):
         return redirect('/categories/')
     else:
         add_category_form = CategoryForm()
-        context['add_category_form'] = add_category_form
     return render(request,
-                  'categories.html',
-                   context)
+                  'add_category.html',
+                  {'add_category_form': add_category_form})
 
 @permission_required("storage.edit_category")
 def edit_category(request, id=None):
@@ -227,6 +234,7 @@ def edit_category(request, id=None):
                   {'edit_category_form': edit_category_form,
                    'id': id})
 
+@permission_required('storage.delete_category')
 def delete_category(request, id=None):
     category = get_object_or_404(Category, pk=id)
     try:
