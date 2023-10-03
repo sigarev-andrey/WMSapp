@@ -248,12 +248,14 @@ def delete_category(request, id=None):
                              e)
     return redirect('/categories/')
 
+@permission_required('storage.view_company')
 def companies(request):
     companies = Company.objects.all()
     return render(request,
                   'companies.html',
                   {'companies': companies})
 
+@permission_required('storage.add_company')
 def add_company(request):
     if (request.method == 'POST'):
         add_company_form = CompanyForm(request.POST)
@@ -275,6 +277,7 @@ def add_company(request):
                   'add_company.html',
                   {'add_company_form': add_company_form})
 
+@permission_required('storage.edit_company')
 def edit_company(request, id=None):
     company = get_object_or_404(Company, pk=id)
     if (request.method == 'POST'):
@@ -295,7 +298,8 @@ def edit_company(request, id=None):
                       'edit_company.html',
                       {'edit_company_form': edit_company_form,
                        'id': id})
-    
+
+@permission_required('storage.delete_company')
 def delete_company(request, id=None):
     company = get_object_or_404(Company, pk=id)
     try:
@@ -309,6 +313,7 @@ def delete_company(request, id=None):
                              e)
     return redirect('/companies/')
 
+@permission_required('storage.view_item')
 def items(request):
     items = Item.objects.all()
     paginator = Paginator(items, 10)
@@ -318,6 +323,7 @@ def items(request):
                   'items.html',
                   {'items': page_items})
 
+@permission_required('storage.add_item')
 def add_item(request):
     if (request.method == 'POST'):
         add_item_form = ItemForm(request.POST)
@@ -337,6 +343,7 @@ def add_item(request):
                   'add_item.html',
                   {'add_item_form': add_item_form})
 
+@permission_required('storage.edit_item')
 def edit_item(request, id=None):
     item = get_object_or_404(Item, pk=id)
     if (request.method == 'POST'):
@@ -358,6 +365,7 @@ def edit_item(request, id=None):
                   {'edit_item_form': edit_item_form,
                    'id': id})
 
+@permission_required('storage.delete_item')
 def delete_item(request, id=None):
     item = get_object_or_404(Item, pk=id)
     try:
@@ -394,12 +402,14 @@ def user_login(request):
 def user_logout(request):
     logout(request)
 
+@permission_required('storage.view_contract')
 def contracts(request):
     contracts = Contract.objects.all()
     return render(request,
                   'contracts.html',
                   {'contracts': contracts})
 
+@permission_required('storage.add_contract')
 def add_contract(request):
     if (request.method == 'POST'):
         add_contract_form = ContractForm(request.POST)
@@ -419,6 +429,7 @@ def add_contract(request):
                   'add_contract.html',
                   {'add_contract_form': add_contract_form})
 
+@permission_required('storage.edit_contract')
 def edit_contract(request, id=None):
     contract = get_object_or_404(Contract, pk=id)
     if (request.method == 'POST'):
@@ -440,6 +451,7 @@ def edit_contract(request, id=None):
                   {'edit_contract_form': edit_contract_form,
                    'id': id})
 
+@permission_required('storage.delete_contract')
 def delete_contract(request, id=None):
     contract = get_object_or_404(Contract, pk=id)
     try:
@@ -453,12 +465,14 @@ def delete_contract(request, id=None):
                              e)
     return redirect('/contracts/')
 
+@permission_required('storage.view_supply')
 def supplies(request):
     supplies = Supply.objects.all()
     return render(request,
                   'supplies.html',
                   {'supplies': supplies})
 
+@permission_required('storage.add_supply')
 def add_supply(request):
     if (request.method == 'POST'):
         add_supply_form = SupplyForm(request.POST)
@@ -474,6 +488,7 @@ def add_supply(request):
                   'add_supply.html',
                   {'add_supply_form': add_supply_form})
 
+@permission_required('storage.edit_supply')
 def edit_supply(request, id=False):
     supply = get_object_or_404(Supply, pk=id)
     if (request.method == 'POST'):
@@ -496,6 +511,7 @@ def edit_supply(request, id=False):
                   {'edit_supply_form': edit_supply_form,
                    'id': id})
 
+@permission_required('storage.delete_supply')
 def delete_supply(request, id=False):
     supply = get_object_or_404(Supply, pk=id)
     try:
@@ -509,6 +525,7 @@ def delete_supply(request, id=False):
                              e)
     return redirect('/supplies/')
 
+@permission_required('storage.view_iteminsupply')
 def details_supply(request, id):
     supply = get_object_or_404(Supply, pk=id)
     items = ItemInSupply.objects.filter(supply=supply.pk)
@@ -517,6 +534,7 @@ def details_supply(request, id):
                   {'supply': supply,
                    'items': items})
 
+@permission_required('storage.add_iteminsupply')
 @transaction.atomic
 def add_item_in_supply(request, id):
     supply = get_object_or_404(Supply, pk=id)
@@ -546,6 +564,7 @@ def add_item_in_supply(request, id):
                     {'add_item_in_supply_form': add_item_in_supply_form,
                      'id': id})
 
+@permission_required('storage.delete_iteminsupply')
 @transaction.atomic
 def delete_item_from_supply(request, id):
     item_in_supply = get_object_or_404(ItemInSupply, pk=id)
@@ -568,12 +587,14 @@ def delete_item_from_supply(request, id):
                                  e)
     return redirect('/supplies/details/' + str(supply_id) + '/')
 
+@permission_required('storage.view_staff')
 def staff(request):
     staff = Staff.objects.all()
     return render(request,
                   'staff.html',
                   {'staff': staff})
 
+@permission_required('storage.add_staff')
 def add_staff(request):
     if (request.method == 'POST'):
         add_staff_form = StaffForm(request.POST)
@@ -589,6 +610,7 @@ def add_staff(request):
                   'add_staff.html',
                   {'add_staff_form': add_staff_form})
 
+@permission_required('storage.edit_staff')
 def edit_staff(request, id=False):
     staff = get_object_or_404(Staff, pk=id)
     if (request.method == 'POST'):
@@ -610,6 +632,7 @@ def edit_staff(request, id=False):
                   {'edit_staff_form': edit_staff_form,
                    'id': id})
 
+@permission_required('storage.delete_staff')
 def delete_staff(request, id=False):
     staff = get_object_or_404(Staff, pk=id)
     try:
@@ -623,12 +646,14 @@ def delete_staff(request, id=False):
                              e)
     return redirect('/staff/')
 
+@permission_required('storage.view_release')
 def releases(request):
     releases = Release.objects.all()
     return render(request,
                   'releases.html',
                   {'releases': releases})
 
+@permission_required('storage.add_release')
 def add_release(request):
     if (request.method == 'POST'):
         add_release_form = ReleaseForm(request.POST)
@@ -648,6 +673,7 @@ def add_release(request):
                   'add_release.html',
                   {'add_release_form': add_release_form})
 
+@permission_required('storage.edit_release')
 def edit_release(request, id=None):
     release = get_object_or_404(Release, pk=id)
     if (request.method == 'POST'):
@@ -672,6 +698,7 @@ def edit_release(request, id=None):
                   {'edit_release_form': edit_release_form,
                    'id': id})
 
+@permission_required('storage.delete_release')
 def delete_release(request, id=None):
     release = get_object_or_404(Release, pk=id)
     try:
@@ -685,6 +712,7 @@ def delete_release(request, id=None):
                              e)
     return redirect('/releases/')
 
+@permission_required('storage.view_iteminrelease')
 def details_release(request, id=None):
     release = get_object_or_404(Release, pk=id)
     items = ItemInRelease.objects.filter(release=release.pk)
@@ -693,6 +721,7 @@ def details_release(request, id=None):
                   {'release': release,
                    'items': items})
 
+@permission_required('storage.add_iteminrelease')
 @transaction.atomic
 def add_item_in_release(request, id):
     release = get_object_or_404(Release, pk=id)
