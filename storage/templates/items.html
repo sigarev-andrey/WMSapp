@@ -2,13 +2,8 @@
 
 {% block title %} Позиция {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
-
 {% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1" style="width: 40px;" title="Добавить" data-bs-toggle="modal" data-bs-target="#add-item">
+<button type="button" class="btn btn-outline-primary me-1 add-item" style="width: 40px;" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
 {% endblock buttons %}
@@ -79,6 +74,19 @@
 
 <script>
   $('document').ready(function () {
+    $('.add-item').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/items/add/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.add-modal').html(data);
+        }
+      }).done(function () {
+        $('#add-item').modal('show');
+      });
+    });
     $('.edit-item').on('click', function (e) {
       e.preventDefault();
       pk = $(this).data('pk');
@@ -108,7 +116,7 @@
     });
   });
 </script>
-<div class="edit-modal">
-</div>
+<div class="add-modal"></div>  
+<div class="edit-modal"></div>
 {% include 'delete_item.html' %}
 {% endblock content %}

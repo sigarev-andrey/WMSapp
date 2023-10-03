@@ -314,6 +314,11 @@ def items(request):
     paginator = Paginator(items, 10)
     page_number = request.GET.get('page')
     page_items = paginator.get_page(page_number)
+    return render(request,
+                  'items.html',
+                  {'items': page_items})
+
+def add_item(request):
     if (request.method == 'POST'):
         add_item_form = ItemForm(request.POST)
         if add_item_form.is_valid:
@@ -322,12 +327,15 @@ def items(request):
                                  'Позиция успешно добавлена')
             add_item_form.save()
             return redirect('/items/')
+        messages.add_message(request,
+                        messages.ERROR,
+                        add_item_form.errors.as_data())
+        return redirect('/items/')
     else:
         add_item_form = ItemForm()
     return render(request,
-                  'items.html',
-                  {'items': page_items,
-                   'add_item_form': add_item_form})
+                  'add_item.html',
+                  {'add_item_form': add_item_form})
 
 def edit_item(request, id=None):
     item = get_object_or_404(Item, pk=id)
