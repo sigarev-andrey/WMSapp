@@ -396,6 +396,11 @@ def user_logout(request):
 
 def contracts(request):
     contracts = Contract.objects.all()
+    return render(request,
+                  'contracts.html',
+                  {'contracts': contracts})
+
+def add_contract(request):
     if (request.method == 'POST'):
         add_contract_form = ContractForm(request.POST)
         if add_contract_form.is_valid:
@@ -404,12 +409,15 @@ def contracts(request):
                                  'Договор успешно добавлена')
             add_contract_form.save()
             return redirect('/contracts/')
+        messages.add_message(request,
+                             messages.ERROR,
+                             add_contract_form.errors.as_data())
+        return redirect('/contracts/')
     else:
         add_contract_form = ContractForm()
     return render(request,
-                  'contracts.html',
-                  {'contracts': contracts,
-                   'add_contract_form': add_contract_form})
+                  'add_contract.html',
+                  {'add_contract_form': add_contract_form})
 
 def edit_contract(request, id=None):
     contract = get_object_or_404(Contract, pk=id)

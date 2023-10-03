@@ -41,6 +41,7 @@ urlpatterns = [
     path('items/delete/<int:id>/', views.delete_item, name='delete-item'),
     #contract instance path
     path('contracts/', views.contracts, name='contracts'),
+    path('contracts/add/', views.add_contract, name='add-contract'),
     path('contracts/edit/<int:id>/', views.edit_contract, name='edit-contract'),
     path('contracts/delete/<int:id>/', views.delete_contract, name='delete-contract'),
     #supply instance path

@@ -5,7 +5,7 @@
         <h5 class="modal-title" id="add-contract-label">Добавление договора</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="" method="POST" class="form">
+      <form action="{% url 'storage:add-contract' %}" method="POST" class="form">
         <div class="modal-body">
           {% csrf_token %}
           <div class="form-floating mb-3">
@@ -26,8 +26,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-primary">Добавить</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+          <button type="submit" class="btn btn-outline-success">Добавить</button>
+          <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
         </div>
       </form>
     </div>
