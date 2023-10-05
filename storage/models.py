@@ -52,9 +52,9 @@ class Item(models.Model):
 
     class Meta:
         unique_together = ('manufacturer', 'article')
-        ordering = ['article']
+        ordering = ['manufacturer', 'article']
         indexes = [
-            models.Index(fields=['article'])
+            models.Index(fields=['manufacturer', 'article'])
         ]
 
     def __str__(self) -> str:
