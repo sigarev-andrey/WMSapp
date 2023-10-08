@@ -16,7 +16,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'category')
     search_fields = ['manufacturer__name', 'article', 'description']
     list_filter = ['manufacturer', 'category']
-    list_per_page = 50
+    list_per_page = 15
 
 admin.site.register(Item, ItemAdmin)
 
@@ -24,7 +24,7 @@ class StorageAdmin(admin.ModelAdmin):
     list_display = ('item', 'get_unit', 'count', 'get_category')
     search_fields = ['item__manufacturer__name', 'item__article', 'item__description']
     list_filter = ['item__manufacturer', 'item__category']
-    list_per_page = 50
+    list_per_page = 15
 
     @admin.display(ordering='item__unit', description='Unit')
     def get_unit(self, obj):
@@ -38,6 +38,6 @@ admin.site.register(Storage, StorageAdmin)
 
 class ManufacturerAdmin(admin.ModelAdmin):
     search_fields = ['name']
-    list_per_page = 50
+    list_per_page = 15
 
 admin.site.register(Manufacturer, ManufacturerAdmin)
