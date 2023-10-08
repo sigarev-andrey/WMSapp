@@ -16,6 +16,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'category')
     search_fields = ['manufacturer__name', 'article', 'description']
     list_filter = ['manufacturer', 'category']
+    autocomplete_fields = ['manufacturer']
     list_per_page = 15
 
 admin.site.register(Item, ItemAdmin)
@@ -24,6 +25,7 @@ class StorageAdmin(admin.ModelAdmin):
     list_display = ('item', 'get_unit', 'count', 'get_category')
     search_fields = ['item__manufacturer__name', 'item__article', 'item__description']
     list_filter = ['item__manufacturer', 'item__category']
+    autocomplete_fields = ['item']
     list_per_page = 15
 
     @admin.display(ordering='item__unit', description='Unit')
