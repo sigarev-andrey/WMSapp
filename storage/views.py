@@ -1,6 +1,6 @@
+from datetime import date
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse, HttpResponseForbidden
-from .models import Storage, Category, Manufacturer, Unit
+from django.http import HttpResponse
 from django.db import transaction
 from django.db.models import CharField, Value, Sum, F
 from django.db.models.functions import Concat
@@ -8,7 +8,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator
+import xlwt
 from .forms import *
+from .models import Storage, Category, Manufacturer, Unit
+
 
 def clean_filters(filters):
     filters = {k: v for (k, v) in filters.items() if v}
@@ -757,3 +760,51 @@ def add_item_in_release(request, id):
                     'add_item_in_release.html',
                     {'add_item_in_release_form': add_item_in_release_form,
                      'id': id})
+
+def get_width(num_characters):
+    return int((1 + num_characters) * 256)
+
+def export_storage_to_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    file_name = f'storage_report_{date.today()}.xls'
+    response['Content-Disposition'] = f'attachment; filename={file_name}'
+    storage = Storage.objects.all()
+    storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
+                                                     'item__description', output_field=CharField()))
+    storage = storage.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
+    storage = storage.filter(total_count__gt=0)
+    categories = Category.objects.all()
+
+    wb = xlwt.Workbook(encoding='utf-8')
+
+    for category in categories:
+        rows = storage.filter(category=category)
+        if not rows:
+            continue
+        columns_to_write = ['full_item_name', 'unit', 'total_count']
+        ws = wb.add_sheet(category.name)
+        row_num = 0
+        header_style = xlwt.easyxf('font: bold 1, name Calibri, height 240; align: vert center, horiz center;')
+        columns = ['Наименование', 'Ед. изм.', 'Кол-во']
+        ws.row(row_num).height_mismatch = True
+        ws.row(row_num).height = 30 * 20
+        columns_width = []
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], header_style)
+            columns_width.append(get_width(len(columns[col_num])))
+        columns_styles = []
+        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center;'))
+        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
+        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
+        for row in rows:
+            row_num += 1
+            for col_num in range(len(columns_to_write)):
+                ws.write(row_num, col_num, row[columns_to_write[col_num]], columns_styles[col_num])
+                column_width = get_width(len(str(row[columns_to_write[col_num]])))
+                if column_width > columns_width[col_num]:
+                    columns_width[col_num] = column_width
+        for col_num in range(len(columns_width)):
+            ws.col(col_num).width = columns_width[col_num]
+    
+    wb.save(response)
+    return response

@@ -11,7 +11,7 @@ urlpatterns = [
     path('', views.storage),
     #storage path
     path('storage/', views.storage, name='storage'),
-    #manufacturer instance path
+    path('storage/export/', views.export_storage_to_excel, name='storage-export'),
     path('manufacturers/', views.manufacturers, name='manufacturers'),
     path('manufacturers/add/', views.add_manufacturer, name='add-manufacturer'),
     path('manufacturers/edit/<int:id>/', views.edit_manufacturer, name='edit-manufacturer'),
