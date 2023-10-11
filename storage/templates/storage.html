@@ -56,22 +56,38 @@
 {% if storage.has_other_pages %}
   <nav aria-label="Page navigation example">
     <ul class="pagination">
+      {% if storage.number > 1 %}
+        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link">Перв.</a></li>
+      {% endif %}
       {% if storage.has_previous %}
         <li class="page-item"><a class="page-link" href="?page={{ storage.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
       {% else %}
         <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
       {% endif %}
+      {% if storage.number|add:-3 > 1 %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
       {% for p in storage.paginator.page_range %}
         {% if storage.number == p %}
           <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-        {% else %}
+        {% elif p >= storage.number|add:-3 and p <= storage.number|add:3 %}
           <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
         {% endif %}
       {% endfor %}
+      {% if storage.number|add:3 < storage.paginator.num_pages %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
       {% if storage.has_next %}
         <li class="page-item"><a class="page-link" href="?page={{ storage.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
       {% else %}
         <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+      {% if storage.number < storage.paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?page={{ storage.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
       {% endif %}
     </ul>
   </nav>

@@ -35,7 +35,7 @@ def storage(request):
         'text_filter': request.GET.get('text_filter'),
     }
     html_queries = clean_filters(html_queries)
-    paginator = Paginator(storage, 10)
+    paginator = Paginator(storage, 15)
     page_number = request.GET.get('page')
     page_storage = paginator.get_page(page_number)
     filter_form = StorageFilterForm(initial=html_queries)
@@ -53,7 +53,7 @@ def storage(request):
         html_queries = clean_filters(html_queries)
         if filters:
             storage = storage.filter(**filters)
-        paginator = Paginator(storage, 10)
+        paginator = Paginator(storage, 15)
         page_number = request.GET.get('page')
         page_storage = paginator.get_page(page_number)
     return render(request,
@@ -65,9 +65,12 @@ def storage(request):
 @permission_required('storage.view_manufacturer')
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
+    paginator = Paginator(manufacturers, 1)
+    page_number = request.GET.get('page')
+    page_manufacturers = paginator.get_page(page_number)
     return render(request,
                   'manufacturers.html',
-                  {'manufacturers': manufacturers})
+                  {'manufacturers': page_manufacturers})
 
 @permission_required('storage.add_manufacturer')
 def add_manufacturer(request):

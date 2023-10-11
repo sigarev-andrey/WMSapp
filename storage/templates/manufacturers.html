@@ -2,11 +2,6 @@
 
 {% block title %} Производитель {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
-
 {% block buttons %}
 <button type="button" class="btn btn-outline-primary me-1 add-manufacturer" style="width: 40px;" title="Добавить">
   <i class="fa fa-plus"></i>
@@ -41,6 +36,48 @@
     {% endfor %}
   </tbody>
 </table>
+
+<!--Pagination-->
+{% if manufacturers.has_other_pages %}
+  <nav aria-label="Pagination">
+    <ul class="pagination">
+      {% if manufacturers.number > 1 %}
+        <li class="page-item"><a class="page-link" href="?page=1">Перв.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Перв.</a></li>
+      {% endif %}
+      {% if manufacturers.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ manufacturers.previous_page_number }}">Пред.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
+      {% endif %}
+      {% if manufacturers.number|add:-3 > 1 %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% for p in manufacturers.paginator.page_range %}
+        {% if manufacturers.number == p %}
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% elif p >= manufacturers.number|add:-3 and p <= manufacturers.number|add:3 %}
+          <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if manufacturers.number|add:+3 < manufacturers.paginator.num_pages %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% if manufacturers.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ manufacturers.next_page_number }}">След.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+      {% if manufacturers.number < manufacturers.paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?page={{ manufacturers.paginator.num_pages }}">Посл.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
 <script>
   $('document').ready(function () {
     $('.add-manufacturer').on('click', function (e) {
