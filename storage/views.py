@@ -65,7 +65,7 @@ def storage(request):
 @permission_required('storage.view_manufacturer')
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
-    paginator = Paginator(manufacturers, 1)
+    paginator = Paginator(manufacturers, 10)
     page_number = request.GET.get('page')
     page_manufacturers = paginator.get_page(page_number)
     return render(request,
