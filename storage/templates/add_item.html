@@ -8,9 +8,15 @@
       <form action="{% url 'storage:add-item' %}" method="POST" class="form">
         <div class="modal-body">
           {% csrf_token %}
-          <div class="form-floating mb-3">
-            {{ add_item_form.manufacturer }}
-            <label for="manufacturer_name">Производитель</label>
+          <div class="mb-3">
+            <label class="form-label">Производитель</label>
+            <input class="form-select" id="manufacturer-datalist" placeholder="--- Наименование ---" name="manufacturer"
+              type="text" list="manufacturers">
+            <datalist id="manufacturers">
+              {% for i in add_item_form.fields.manufacturer.queryset %}
+                <option data-value="{{ i.id }}" value="{{ i.name }}"></option>
+              {% endfor %}
+            </datalist>
           </div>
           <div class="form-floating mb-3">
             {{ add_item_form.article }}
@@ -30,10 +36,17 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-success">Добавить</button>
+          <button id="submit" type="submit" class="btn btn-outline-success">Добавить</button>
           <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script>
+  $('.form').submit(function () {
+    var value = $('#manufacturer-datalist').val();
+    $('#manufacturer-datalist').val($('#manufacturers [value="' + value + '"]').data('value'));
+  })
+</script>

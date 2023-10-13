@@ -332,6 +332,7 @@ def items(request):
 @permission_required('storage.add_item')
 def add_item(request):
     if (request.method == 'POST'):
+        print(request.POST)
         add_item_form = ItemForm(request.POST)
         if add_item_form.is_valid:
             messages.add_message(request,
