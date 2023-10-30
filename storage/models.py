@@ -15,6 +15,8 @@ class Manufacturer(models.Model):
         indexes = [
             models.Index(fields=['name'])
         ]
+        verbose_name = 'Производитель'
+        verbose_name_plural = 'Производители'
 
     def __str__(self) -> str:
         return self.name
@@ -27,12 +29,22 @@ class Category(models.Model):
         indexes = [
             models.Index(fields=['name'])
         ]
+        verbose_name = 'Катагория'
+        verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
         return self.name
 
 class Unit(models.Model):
     name = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        indexes = [
+            models.Index(fields=['name'])
+        ]
+        verbose_name = 'Единица измерения'
+        verbose_name_plural = 'Единицы измерения'
 
     def __str__(self) -> str:
         return self.name
@@ -56,6 +68,8 @@ class Item(models.Model):
         indexes = [
             models.Index(fields=['manufacturer', 'article'])
         ]
+        verbose_name = 'Позиция'
+        verbose_name_plural = 'Позиции'
 
     def __str__(self) -> str:
         return self.manufacturer.name + " " + self.article + " " + self.description
@@ -68,6 +82,9 @@ class Contract(models.Model):
 
     class Meta:
         unique_together = ('short_number', 'full_number', 'date')
+        ordering = ['date']
+        verbose_name = 'Договор'
+        verbose_name_plural = 'Договоры'
 
     def __str__(self) -> str:
         str = self.short_number
@@ -86,6 +103,9 @@ class Storage(models.Model):
 
     class Meta:
         unique_together = ('item', 'contract')
+        ordering = ['item', 'contract']
+        verbose_name = 'Позиция на складе'
+        verbose_name_plural = 'Позиции на складе'
 
     def __str__(self) -> str:
         return self.item.manufacturer.name + " " + self.item.article + " " + self.contract.short_number + " " + str(self.count)
@@ -127,6 +147,8 @@ class Company(models.Model):
         indexes = [
             models.Index(fields=['name'])
         ]
+        verbose_name = 'Фирма'
+        verbose_name_plural = 'Фирмы'
 
     def __str__(self) -> str:
         return self.name

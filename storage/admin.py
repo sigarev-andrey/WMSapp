@@ -7,10 +7,32 @@ from .models import Storage
 from .models import Contract
 from .models import ItemInRelease
 
-admin.site.register(Category)
-admin.site.register(Unit)
-admin.site.register(Contract)
-admin.site.register(ItemInRelease)
+class CategoryAdmin(admin.ModelAdmin):
+    list_per_page = 15
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Категории'}
+        return super(CategoryAdmin, self).changelist_view(request, extra_context=extra_context)
+
+admin.site.register(Category, CategoryAdmin)
+
+class UnitAdmin(admin.ModelAdmin):
+    list_per_page = 15
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Единицы измерения'}
+        return super(UnitAdmin, self).changelist_view(request, extra_context=extra_context)
+
+admin.site.register(Unit, UnitAdmin)
+
+class ContractAdmin(admin.ModelAdmin):
+    list_per_page = 15
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Категории'}
+        return super(ContractAdmin, self).changelist_view(request, extra_context=extra_context)
+
+admin.site.register(Contract, ContractAdmin)
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'category')
@@ -18,6 +40,10 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['manufacturer', 'category']
     autocomplete_fields = ['manufacturer']
     list_per_page = 15
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Позиции'}
+        return super(ItemAdmin, self).changelist_view(request, extra_context=extra_context)
 
 admin.site.register(Item, ItemAdmin)
 
@@ -36,10 +62,18 @@ class StorageAdmin(admin.ModelAdmin):
     def get_category(self, obj):
         return obj.item.category
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Позиции на складе'}
+        return super(StorageAdmin, self).changelist_view(request, extra_context=extra_context)
+
 admin.site.register(Storage, StorageAdmin)
 
 class ManufacturerAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_per_page = 15
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Производители'}
+        return super(ManufacturerAdmin, self).changelist_view(request, extra_context=extra_context)
 
 admin.site.register(Manufacturer, ManufacturerAdmin)
