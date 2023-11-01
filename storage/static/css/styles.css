@@ -5,7 +5,7 @@ body {
 /*----------------------------*/
 
 /*Bootstrap alerts*/
-.alert-danger {
+.alert {
     position:fixed; 
     top: 0px; 
     left: 0px; 
@@ -15,6 +15,11 @@ body {
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 }
 /*-------------------------------------------------*/
+
+/*Bootstrap textarea for description field*/
+#description {
+  height: 100px;
+}
 
 /*Glow effect around form widgets*/
 .form-control:focus {
