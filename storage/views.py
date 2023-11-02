@@ -334,7 +334,7 @@ def add_item(request):
     if (request.method == 'POST'):
         print(request.POST)
         add_item_form = ItemForm(request.POST)
-        if add_item_form.is_valid:
+        if add_item_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
                                  'Позиция успешно добавлена')

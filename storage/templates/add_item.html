@@ -8,15 +8,15 @@
       <form action="{% url 'storage:add-item' %}" method="POST" class="form">
         <div class="modal-body">
           {% csrf_token %}
-          <div class="mb-3">
-            <label class="form-label">Производитель</label>
-            <input class="form-select" id="manufacturer-datalist" placeholder="--- Наименование ---" name="manufacturer"
+          <div class="form-floating mb-3">
+            <input class="form-control" id="manufacturer-datalist" placeholder="Производитель" name="manufacturer"
               type="text" list="manufacturers">
             <datalist id="manufacturers">
               {% for i in add_item_form.fields.manufacturer.queryset %}
                 <option data-value="{{ i.id }}" value="{{ i.name }}"></option>
               {% endfor %}
             </datalist>
+            <label for="manufacturer-datalist">Производитель</label>
           </div>
           <div class="form-floating mb-3">
             {{ add_item_form.article }}

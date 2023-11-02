@@ -98,10 +98,6 @@ class ItemForm(ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
-        self.fields['manufacturer'].widget.attrs.update({
-            'id': 'maufacturer_name',
-            'placeholder': 'Производитель'
-        })
         self.fields['article'].widget.attrs.update({
             'id': 'article',
             'placeholder': 'Артикул'
@@ -121,6 +117,9 @@ class ItemForm(ModelForm):
 
     class Meta:
         model = Item
+        widgets = {
+            'manufacturer': forms.TextInput(),
+        }
         fields = ['manufacturer', 'article', 'category', 'description', 'unit']
 
 class ContractForm(ModelForm):
