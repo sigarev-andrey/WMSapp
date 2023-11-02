@@ -63,6 +63,17 @@ body {
 }
 /*--------------------------------*/
 
+/*Button for input clearing*/
+#clear-input:focus {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+#clear-input:active {
+  background-color: #B1BDC8;
+}
+/*--------------------------*/
+
 /*Bootstrap .navbar*/
 .navbar {
   background-color: #EDECE6;

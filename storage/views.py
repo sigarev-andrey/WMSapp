@@ -12,7 +12,7 @@ import xlwt
 from .forms import *
 from .models import Storage, Category, Manufacturer, Unit
 
-
+#Function to return only filled filter fields in form
 def clean_filters(filters):
     filters = {k: v for (k, v) in filters.items() if v}
     return filters
