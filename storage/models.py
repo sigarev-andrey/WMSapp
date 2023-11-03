@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Q
 from django.db.models.functions import Lower
+from django.db.models import UniqueConstraint
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=250)
@@ -52,18 +54,26 @@ class Unit(models.Model):
 class Item(models.Model):
     manufacturer = models.ForeignKey(Manufacturer,
                                      on_delete=models.PROTECT,
-                                     related_name='item_manufacturer')
+                                     related_name='item_manufacturer',
+                                     null=True,
+                                     blank=True)
     article = models.CharField(max_length=250)
     category = models.ForeignKey(Category,
                                  on_delete=models.PROTECT,
                                  related_name='item_category')
-    description = models.TextField()
+    description = models.TextField(blank=True)
     unit = models.ForeignKey(Unit,
                              on_delete=models.PROTECT,
                              related_name='item_unit')
 
     class Meta:
-        unique_together = ('manufacturer', 'article')
+        constraints = [
+            UniqueConstraint(fields=['manufacturer', 'article'],
+                             name='with_manufacturer'),
+            UniqueConstraint(fields=['article'],
+                             condition=Q(manufacturer=None),
+                             name='without_manufacturer'),
+        ]
         ordering = ['manufacturer', 'article']
         indexes = [
             models.Index(fields=['manufacturer', 'article'])
@@ -72,7 +82,12 @@ class Item(models.Model):
         verbose_name_plural = 'Позиции'
 
     def __str__(self) -> str:
-        return self.manufacturer.name + " " + self.article + " " + self.description
+        str = self.article
+        if self.manufacturer:
+            str = self.manufacturer.name + str
+        if self.delescription:
+            str += self.description
+        return str
 
 class Contract(models.Model):
     short_number = models.CharField(max_length=250)

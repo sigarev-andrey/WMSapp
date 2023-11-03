@@ -28,7 +28,7 @@
   <tbody>
     {% for item in items %}
     <tr>
-      <td class="align-middle">{{ item.manufacturer }} {{ item.article }} {{ item.description }}</td>
+      <td class="align-middle">{{ item.manufacturer|default_if_none:'' }} {{ item.article }} {{ item.description }}</td>
       <td class="text-center align-middle">{{ item.category }}</td>
       <td class="text-center align-middle">{{ item.unit }}</td>
       <td class="text-center align-middle">
