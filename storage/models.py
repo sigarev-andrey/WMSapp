@@ -85,7 +85,7 @@ class Item(models.Model):
         str = self.article
         if self.manufacturer:
             str = self.manufacturer.name + str
-        if self.delescription:
+        if self.description:
             str += self.description
         return str
 
