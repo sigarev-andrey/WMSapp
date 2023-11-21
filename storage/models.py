@@ -173,15 +173,30 @@ class Release(models.Model):
     contract = models.ForeignKey(Contract,
                                  on_delete=models.PROTECT)
     staff = models.ForeignKey(Staff,
-                              on_delete=models.PROTECT)
+                              on_delete=models.PROTECT,
+                              null=True,
+                              blank=True)
     company = models.ForeignKey(Company,
                                 on_delete=models.PROTECT)
     description = models.TextField(blank=True)
     items = models.ManyToManyField(Storage, through='ItemInRelease')
     
     class Meta:
-        unique_together = ('date', 'contract', 'staff', 'company')
+        constraints = [
+            UniqueConstraint(fields=['date', 'contract', 'staff', 'company'],
+                             name='with_staff'),
+            UniqueConstraint(fields=['date', 'contract', 'company'],
+                             condition=Q(staff=None),
+                             name='without_staff'),
+        ]
         ordering = ['date']
+        constraints = [
+            UniqueConstraint(fields=['date', 'contract', 'staff', 'company'],
+                             name='with_staff'),
+            UniqueConstraint(fields=['date', 'contract', 'company'],
+                             condition=Q(staff=None),
+                             name='without_staff'),
+        ]
 
 class ItemInRelease(models.Model):
     item = models.ForeignKey(Storage,

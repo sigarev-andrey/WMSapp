@@ -247,7 +247,13 @@ class ItemInReleaseForm(ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+        self.fields['count'].widget.attrs.update({
+            'placeholder': 'Кол-во'
+        })
             
     class Meta:
         model = ItemInRelease
+        widgets = {
+            'item': forms.TextInput(),
+        }
         exclude = ['release']

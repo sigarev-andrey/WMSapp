@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %} Ед. изм. {% endblock title %}
+{% block title %} Выдача {% endblock title %}
 
 {% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
 {% block income_link_active %} class="nav-link" {% endblock income_link_active %}
@@ -31,7 +31,7 @@
     <tr>
       <td class="align-middle">{{ release.date }}</td>
       <td class="align-middle">{{ release.contract }}</td>
-      <td class="align-middle">{{ release.staff }} {{ release.company }}</td>
+      <td class="align-middle">{{ release.staff | default_if_none:'' }} {{ release.company }}</td>
       <td class="align-middle">{{ release.description }}</td>
       <td class="text-center">
         <a class="btn btn-outline-success text-center open-release" title="Подробно" href="{% url 'storage:details-release' release.pk %}">

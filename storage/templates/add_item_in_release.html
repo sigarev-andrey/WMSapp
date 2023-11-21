@@ -9,18 +9,22 @@
       <form action="{% url 'storage:add-item-in-release' id %}" method="POST" class="form">
         <div class="modal-body">
           {% csrf_token %}
-          <div class="mb-3">
-            <label class="form-label">Позиция</label>
-            <input class="form-select" placeholder="--- Наименование ---" name="item" type="text" list="items">
+          <div class="input-group form-floating mb-3">
+            <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
+              type="text" list="items" autocomplete="off">
+            <button class="btn btn-outline-secondary" type="button" id="clear-input" title="Очистить">
+              <i class="fa fa-eraser"></i>
+            </button>
             <datalist id="items">
               {% for i in add_item_in_release_form.fields.item.queryset %}
-              <option value="{{ i.id }}">{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}</option>
+                <option data-value="{{ i.id }}" value="{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}"></option>
               {% endfor %}
             </datalist>
+            <label for="item-datalist">Позиция</label>
           </div>
           <div class="form-floating mb-3">
             {{ add_item_in_release_form.count }}
-            <label for="full_number">Кол-во</label>
+            <label for="count">Кол-во</label>
           </div>
         </div>
         <div class="modal-footer">
@@ -31,3 +35,21 @@
     </div>
   </div>
 </div>
+
+<script>
+  $('.form').submit(function (e) {
+    var value = $('#item-datalist').val();
+    if (value == '') {
+      e.preventDefault();
+      $('#item-datalist').css('border-color', 'red');
+    } else {
+      id = $('#items [value="' + value + '"]').data('value');
+      if (id != null) {
+        $('#item-datalist').val(id);
+      } else {
+        e.preventDefault();
+      }
+    }
+    //$('#item-datalist').val($('#items [value="' + value + '"]').data('value'));
+  })
+</script>
