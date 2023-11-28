@@ -123,7 +123,7 @@ class Storage(models.Model):
         verbose_name_plural = 'Позиции на складе'
     
     def __str__(self) -> str:
-        s = self.item.article + ' ' + self.item.article + ' ' + self.contract.short_number + ' ' + str(self.count)
+        s = self.item.article + ' ' + self.contract.short_number + ' ' + str(self.count)
         if self.item.manufacturer:
             s = self.item.manufacturer.name + ' ' + s
         return s
