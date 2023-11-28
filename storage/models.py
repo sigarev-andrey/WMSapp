@@ -82,12 +82,12 @@ class Item(models.Model):
         verbose_name_plural = 'Позиции'
 
     def __str__(self) -> str:
-        str = self.article
+        s = self.article
         if self.manufacturer:
-            str = self.manufacturer.name + str
+            s = self.manufacturer.name + ' ' + s
         if self.description:
-            str += self.description
-        return str
+            s += ' ' + self.description
+        return s
 
 class Contract(models.Model):
     short_number = models.CharField(max_length=250)
@@ -121,9 +121,12 @@ class Storage(models.Model):
         ordering = ['item', 'contract']
         verbose_name = 'Позиция на складе'
         verbose_name_plural = 'Позиции на складе'
-
+    
     def __str__(self) -> str:
-        return self.item.manufacturer.name + " " + self.item.article + " " + self.contract.short_number + " " + str(self.count)
+        s = self.item.article + ' ' + self.item.article + ' ' + self.contract.short_number + ' ' + str(self.count)
+        if self.item.manufacturer:
+            s = self.item.manufacturer.name + ' ' + str
+        return s
 
 class Supply(models.Model):
     date = models.DateField()
