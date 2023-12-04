@@ -92,7 +92,7 @@ class Item(models.Model):
 class Contract(models.Model):
     short_number = models.CharField(max_length=250)
     full_number = models.CharField(max_length=250, blank=True)
-    date = models.DateField(null=True)
+    date = models.DateField(null=True, blank=True)
     description = models.TextField(blank=True)
 
     class Meta:
