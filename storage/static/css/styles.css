@@ -131,7 +131,7 @@ body {
   background-color: #EDECE6;
 }
 .navbar .navbar-nav .dropdown-menu .dropdown-divider {
-  border-top-color: #1f6502;
+  border-top-color: #00386C;
 }
 .navbar .navbar-nav .nav-item.active .nav-link,
 .navbar .navbar-nav .nav-item.active .nav-link:hover,
@@ -140,24 +140,27 @@ body {
 .navbar .navbar-nav .nav-item.show .nav-link:hover,
 .navbar .navbar-nav .nav-item.show .nav-link:focus {
   color: #e2f3eb;
-  background-color: #1f6502;
+  background-color: #00386C;
 }
 .navbar .navbar-toggler {
-  border-color: #1f6502;
+  color: #00386C;
+  border-color: #00386C;
+  background-color: #EDECE6;
 }
 .navbar .navbar-toggler:hover,
 .navbar .navbar-toggler:focus {
-  background-color: #1f6502;
+  color: #EDECE6;
+  background-color: #00386C;
 }
 .navbar .navbar-toggler .navbar-toggler-icon {
-  color: #fdffff;
+  color: #00386C;
 }
 .navbar .navbar-collapse,
 .navbar .navbar-form {
   border-color: #fdffff;
 }
 .navbar .navbar-link {
-  color: #1f6502;
+  color: #00386C;
 }
 .navbar .navbar-link:hover {
   color: #e2f3eb;
@@ -173,7 +176,7 @@ body {
   }
   .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item.active {
     color: #e2f3eb;
-    background-color: #1f6502;
+    background-color: #00386C;
   }
 }
 
@@ -187,7 +190,7 @@ body {
   }
   .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item.active {
     color: #e2f3eb;
-    background-color: #1f6502;
+    background-color: #00386C;
   }
 }
 
@@ -201,7 +204,7 @@ body {
   }
   .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item.active {
     color: #e2f3eb;
-    background-color: #1f6502;
+    background-color: #00386C;
   }
 }
 
@@ -215,7 +218,7 @@ body {
   }
   .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item.active {
     color: #e2f3eb;
-    background-color: #1f6502;
+    background-color: #00386C;
   }
 }
 
@@ -228,7 +231,7 @@ body {
 }
 .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item.active {
   color: #e2f3eb;
-  background-color: #1f6502;
+  background-color: #00386C;
 }
 /*-----------------------------------------------------------------------*/
 

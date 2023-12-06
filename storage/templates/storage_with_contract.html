@@ -1,20 +1,20 @@
 {% extends "main.html" %}
 
-{% block title %} Склад {% endblock title %}
+{% block title %} По договорам {% endblock title %}
 
 {% block buttons %}
-<a class="btn btn-outline-success text-center me-1" style="width: 40px; height: 40px; font-size: 17px" href="{% url 'storage:storage-export' %}"
+<a class="btn btn-outline-success text-center me-1" style="width: 40px;" href="{% url 'storage:storage-export' %}"
   title="Экспорт в Excel">
   <i class="fa fa-file-excel-o"></i>
 </a>
-<button class="btn btn-outline-primary me-1" type="button" style="width: 40px; height: 40px; font-size: 17px;" data-bs-toggle="collapse"
+<button class="btn btn-outline-primary me-1" type="button" style="width: 40px;" data-bs-toggle="collapse"
   data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
   <i class="fa fa-filter"></i>
 </button>
 {% endblock buttons %}
 
 {% block filters %}
-<form action="{%url 'storage:storage' %}" method="GET" class="form">
+<form action="{%url 'storage:storage_with_contract' %}" method="GET" class="form">
   {% csrf_token %}
   <div class="form-floating mb-3">
     {{ filter_form.text_filter }}
@@ -22,7 +22,11 @@
   </div>
   <div class="form-floating mb-3">
     {{ filter_form.category }}
-    <label for="text_filter">Категория</label>
+    <label for="category">Категория</label>
+  </div>
+  <div class="form-floating mb-3">
+    {{ filter_form.contract }}
+    <label for="contract">Договор</label>
   </div>
   <button type="submit" class="btn btn-outline-primary" title="Применить фильтры">Применить</button>
 </form>
@@ -36,6 +40,7 @@
     <tr>
       <th>Наименование</th>
       <th class="text-center">Категория</th>
+      <th class="text-center">Договор</th>
       <th class="text-center">Ед. изм.</th>
       <th class="text-center">Кол-во</th>
     </tr>
@@ -44,9 +49,10 @@
     {% for item in storage %}
     <tr>
       <td class="align-middle">{{item.full_item_name}}</td>
-      <td class="text-center align-middle">{{item.category}}</td>
-      <td class="text-center align-middle">{{item.unit}}</td>
-      <td class="text-center align-middle">{{item.total_count}}</td>
+      <td class="text-center align-middle">{{item.item.category}}</td>
+      <td class="text-center align-middle">{{item.contract}}</td>
+      <td class="text-center align-middle">{{item.item.unit}}</td>
+      <td class="text-center align-middle">{{item.count}}</td>
     </tr>
     {% endfor %}
   </tbody>

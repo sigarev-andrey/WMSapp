@@ -5,6 +5,7 @@ from .models import *
 class StorageFilterForm(forms.Form):
     text_filter = forms.CharField(max_length=255, required=False)
     category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label='Не выбрана')
+    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False, empty_label='Не выбран')
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in iter(self.fields):
@@ -18,6 +19,10 @@ class StorageFilterForm(forms.Form):
         self.fields['category'].widget.attrs.update({
             'id': 'category',
             'placeholder': 'Категория'
+        })
+        self.fields['contract'].widget.attrs.update({
+            'id': 'contract',
+            'placeholder': 'Договор'
         })
 
 class LoginForm(forms.Form):

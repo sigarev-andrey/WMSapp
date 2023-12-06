@@ -12,17 +12,31 @@ import xlwt
 from .forms import *
 from .models import Storage, Category, Manufacturer, Unit
 
-#Function to return only filled filter fields in form
+
 def clean_filters(filters):
+    '''Function to return only filled filter fields in form'''
     filters = {k: v for (k, v) in filters.items() if v}
     return filters
 
+def get_storage_common():
+    '''Function to return storage dateset without contract and summed counts of same items'''
+    result = Storage.objects.all()
+    result = result.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
+                                                     'item__description', output_field=CharField()))
+    result = result.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')
+                             ).order_by('full_item_name').annotate(total_count=Sum('count'))
+    return result
+
+def get_storage_with_contract():
+    '''Function to return storage dataset with contract of each item'''
+    result = Storage.objects.all()
+    result = result.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
+                                                     'item__description', output_field=CharField()))
+    return result
+
 @permission_required('storage.view_storage')
 def storage(request):
-    storage = Storage.objects.all()
-    storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
-                                                     'item__description', output_field=CharField()))
-    storage = storage.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
+    storage = get_storage_common()
     filters = {
         'item__category__id': request.GET.get('category'),
         'full_item_name__icontains': request.GET.get('text_filter')
@@ -39,25 +53,35 @@ def storage(request):
     page_number = request.GET.get('page')
     page_storage = paginator.get_page(page_number)
     filter_form = StorageFilterForm(initial=html_queries)
-    if request.method == 'POST':
-        filter_form = StorageFilterForm(request.POST)
-        filters = {
-            'item__category__id': request.POST.get('category'),
-            'full_item_name__icontains': request.POST.get('text_filter')
-        }
-        filters = clean_filters(filters)
-        html_queries = {
-            'category': request.POST.get('category'),
-            'text_filter': request.POST.get('text_filter'),
-        }
-        html_queries = clean_filters(html_queries)
-        if filters:
-            storage = storage.filter(**filters)
-        paginator = Paginator(storage, 15)
-        page_number = request.GET.get('page')
-        page_storage = paginator.get_page(page_number)
     return render(request,
                   'storage.html',
+                  {'storage': page_storage,
+                   'filter_form': filter_form,
+                   'filters': html_queries})
+
+@permission_required('storage.view_storage')
+def storage_with_contract(request):
+    storage = get_storage_with_contract()
+    filters = {
+        'item__category__id': request.GET.get('category'),
+        'full_item_name__icontains': request.GET.get('text_filter'),
+        'contract__id': request.GET.get('contract'),
+    }
+    filters = clean_filters(filters)
+    if filters:
+        storage = storage.filter(**filters)
+    html_queries = {
+        'category': request.GET.get('category'),
+        'text_filter': request.GET.get('text_filter'),
+        'contract': request.GET.get('contract'),
+    }
+    html_queries = clean_filters(html_queries)
+    paginator = Paginator(storage, 15)
+    page_number = request.GET.get('page')
+    page_storage = paginator.get_page(page_number)
+    filter_form = StorageFilterForm(initial=html_queries)
+    return render(request,
+                  'storage_with_contract.html',
                   {'storage': page_storage,
                    'filter_form': filter_form,
                    'filters': html_queries})
