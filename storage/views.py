@@ -345,10 +345,13 @@ def delete_company(request, id=None):
 
 @permission_required('storage.view_item')
 def items(request):
-    items = Item.objects.all()
+    items = Item.objects.all().annotate(full_item_name=Concat('manufacturer__name', Value(' '), \
+                                                              'article', Value(' '), \
+                                                              'description', \
+                                                              output_field=CharField()))
     filters = {
         'category__id': request.GET.get('category'),
-        'item__icontains': request.GET.get('text_filter')
+        'full_item_name__icontains': request.GET.get('text_filter')
     }
     filters = clean_filters(filters)
     if filters:
