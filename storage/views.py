@@ -346,12 +346,27 @@ def delete_company(request, id=None):
 @permission_required('storage.view_item')
 def items(request):
     items = Item.objects.all()
+    filters = {
+        'category__id': request.GET.get('category'),
+        'item__icontains': request.GET.get('text_filter')
+    }
+    filters = clean_filters(filters)
+    if filters:
+        items = items.filter(**filters)
+    html_queries = {
+        'category': request.GET.get('category'),
+        'text_filter': request.GET.get('text_filter'),
+    }
+    html_queries = clean_filters(html_queries)
     paginator = Paginator(items, 10)
     page_number = request.GET.get('page')
     page_items = paginator.get_page(page_number)
+    filter_form = StorageFilterForm(initial=html_queries)
     return render(request,
                   'items.html',
-                  {'items': page_items})
+                  {'items': page_items,
+                   'filter_form': filter_form,
+                   'filters': html_queries})
 
 @permission_required('storage.add_item')
 def add_item(request):

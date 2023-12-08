@@ -6,7 +6,26 @@
 <button type="button" class="btn btn-outline-primary me-1 add-item" style="width: 40px;" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
+<button class="btn btn-outline-primary me-1" type="button" style="width: 40px; height: 40px; font-size: 17px;" data-bs-toggle="collapse"
+  data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
+  <i class="fa fa-filter"></i>
+</button>
 {% endblock buttons %}
+
+{% block filters %}
+<form action="{%url 'storage:items' %}" method="GET" class="form">
+  {% csrf_token %}
+  <div class="form-floating mb-3">
+    {{ filter_form.text_filter }}
+    <label for="text_filter">Наименование</label>
+  </div>
+  <div class="form-floating mb-3">
+    {{ filter_form.category }}
+    <label for="text_filter">Категория</label>
+  </div>
+  <button type="submit" class="btn btn-outline-primary" title="Применить фильтры">Применить</button>
+</form>
+{% endblock filters %}
 
 {% block content %}
 {% if add_category_form.errors %}
@@ -52,12 +71,12 @@
   <nav aria-label="Pagination">
     <ul class="pagination">
       {% if items.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1">Перв.</a></li>
+        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
       {% else %}
         <li class="page-item disabled"><a class="page-link">Перв.</a></li>
       {% endif %}
       {% if items.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">Пред.</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
       {% else %}
         <li class="page-item disabled"><a class="page-link">Пред.</a></li>
       {% endif %}
@@ -66,21 +85,21 @@
       {% endif %}
       {% for p in items.paginator.page_range %}
         {% if items.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
         {% elif p >= items.number|add:-3 and p <= items.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
         {% endif %}
       {% endfor %}
       {% if items.number|add:3 < items.paginator.num_pages %}
         <li class="page-item"><a class="page-link">...</a></li>
       {% endif %}
       {% if items.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">След.</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
       {% else %}
         <li class="page-item disabled"><a class="page-link">След.</a></li>
       {% endif %}
       {% if items.number < items.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}">Посл.</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
       {% else %}
         <li class="page-item disabled"><a class="page-link">Посл.</a></li>
       {% endif %}
