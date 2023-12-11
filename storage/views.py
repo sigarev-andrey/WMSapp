@@ -89,12 +89,25 @@ def storage_with_contract(request):
 @permission_required('storage.view_manufacturer')
 def manufacturers(request):
     manufacturers = Manufacturer.objects.all()
+    filters = {
+        'name__icontains': request.GET.get('text_filter'),
+    }
+    filters = clean_filters(filters)
+    if filters:
+        manufacturers = manufacturers.filter(**filters)
+    html_queries = {
+        'text_filter': request.GET.get('text_filter'),
+    }
+    html_queries = clean_filters(html_queries)
     paginator = Paginator(manufacturers, 10)
     page_number = request.GET.get('page')
     page_manufacturers = paginator.get_page(page_number)
+    filter_form = StorageFilterForm(initial=html_queries)
     return render(request,
                   'manufacturers.html',
-                  {'manufacturers': page_manufacturers})
+                  {'manufacturers': page_manufacturers,
+                   'filter_form': filter_form,
+                   'filters': html_queries})
 
 @permission_required('storage.add_manufacturer')
 def add_manufacturer(request):

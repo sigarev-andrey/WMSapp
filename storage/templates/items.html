@@ -115,7 +115,6 @@
         url: '/items/add/',
         type: 'GET',
         success: function (data) {
-          console.log(data);
           $('.add-modal').html(data);
         }
       }).done(function () {
@@ -125,12 +124,10 @@
     $('.edit-item').on('click', function (e) {
       e.preventDefault();
       pk = $(this).data('pk');
-      console.log(pk);
       $.ajax({
         url: '/items/edit/' + pk + '/',
         type: 'GET',
         success: function (data) {
-          console.log(data);
           $('.edit-modal').html(data);
         }
       }).done(function () {
@@ -141,11 +138,8 @@
       e.preventDefault();
       pk = $(this).data('pk');
       name = $(this).data('name');
-      console.log(pk);
       url = '/items/delete/' + pk + '/';
-      console.log('url for delete item = ' + url);
       $('#delete-item .form').attr('action', url);
-      console.log('delete form action changed')
       $('#delete-item .message').html('Удалить позицию "' + name + '"?');
       $('#delete-item').modal('show');
     });
