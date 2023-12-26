@@ -25,6 +25,7 @@ def get_storage_common():
                                                      'item__description', output_field=CharField()))
     result = result.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')
                              ).order_by('full_item_name').annotate(total_count=Sum('count'))
+    result = result.filter(total_count__gt=0)
     return result
 
 def get_storage_with_contract():
@@ -32,6 +33,11 @@ def get_storage_with_contract():
     result = Storage.objects.all()
     result = result.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
                                                      'item__description', output_field=CharField()))
+    result = result.annotate(category=F('item__category__name'))
+    result = result.annotate(unit=F('item__unit__name'))
+    result = result.annotate(contract_number=F('contract__short_number'))
+    result = result.values('full_item_name', 'category', 'contract', 'contract_number','unit', 'count')
+    result = result.filter(count__gt=0)
     return result
 
 @permission_required('storage.view_storage')
@@ -821,17 +827,38 @@ def add_item_in_release(request, id):
                      'id': id})
 
 def get_width(num_characters):
+    '''Function to get MS Excel row width according string lenght'''
     return int((1 + num_characters) * 256)
 
 def export_storage_to_excel(request):
     response = HttpResponse(content_type='application/ms-excel')
     file_name = f'storage_report_{date.today()}.xls'
     response['Content-Disposition'] = f'attachment; filename={file_name}'
-    storage = Storage.objects.all()
-    storage = storage.annotate(full_item_name=Concat('item__manufacturer__name', Value(' '), 'item__article', Value(' '),
-                                                     'item__description', output_field=CharField()))
-    storage = storage.values('full_item_name', unit=F('item__unit__name'), category=F('item__category__name')).order_by('full_item_name').annotate(total_count=Sum('count'))
-    storage = storage.filter(total_count__gt=0)
+    filters = {
+        'item__category__id': request.GET.get('category'),
+        'full_item_name__icontains': request.GET.get('text_filter'),
+        'contract__id': request.GET.get('contract'),
+    }
+    filters = clean_filters(filters)
+    by_contract = int(request.GET.get('by_contract'))
+    columns_styles = []
+    columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center;'))
+    columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
+    columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
+    if by_contract:
+        storage = get_storage_with_contract()
+        columns_to_write = ['full_item_name', 'contract_number', 'unit', 'count']
+        columns = ['Наименование', 'Договор', 'Ед. изм.', 'Кол-во']
+        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
+    else:
+        storage = get_storage_common()
+        columns_to_write = ['full_item_name', 'unit', 'total_count']
+        columns = ['Наименование', 'Ед. изм.', 'Кол-во']
+    if filters:
+        storage = storage.filter(**filters)
+        
+    print(type(by_contract))   
+
     categories = Category.objects.all()
 
     wb = xlwt.Workbook(encoding='utf-8')
@@ -840,21 +867,15 @@ def export_storage_to_excel(request):
         rows = storage.filter(category=category)
         if not rows:
             continue
-        columns_to_write = ['full_item_name', 'unit', 'total_count']
         ws = wb.add_sheet(category.name)
         row_num = 0
         header_style = xlwt.easyxf('font: bold 1, name Calibri, height 240; align: vert center, horiz center;')
-        columns = ['Наименование', 'Ед. изм.', 'Кол-во']
         ws.row(row_num).height_mismatch = True
         ws.row(row_num).height = 30 * 20
         columns_width = []
         for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], header_style)
             columns_width.append(get_width(len(columns[col_num])))
-        columns_styles = []
-        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center;'))
-        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
-        columns_styles.append(xlwt.easyxf('font: name Calibri, height 220; align: vert center, horiz center;'))
         for row in rows:
             row_num += 1
             for col_num in range(len(columns_to_write)):

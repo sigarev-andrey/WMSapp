@@ -3,7 +3,7 @@
 {% block title %} По договорам {% endblock title %}
 
 {% block buttons %}
-<a class="btn btn-outline-success text-center me-1" style="width: 40px;" href="{% url 'storage:storage-export' %}"
+<a class="btn btn-outline-success text-center me-1" style="width: 40px;" href="{% url 'storage:storage-export' %}?by_contract=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}"
   title="Экспорт в Excel">
   <i class="fa fa-file-excel-o"></i>
 </a>
@@ -49,9 +49,9 @@
     {% for item in storage %}
     <tr>
       <td class="align-middle">{{item.full_item_name}}</td>
-      <td class="text-center align-middle">{{item.item.category}}</td>
-      <td class="text-center align-middle">{{item.contract}}</td>
-      <td class="text-center align-middle">{{item.item.unit}}</td>
+      <td class="text-center align-middle">{{item.category}}</td>
+      <td class="text-center align-middle">{{item.contract_number}}</td>
+      <td class="text-center align-middle">{{item.unit}}</td>
       <td class="text-center align-middle">{{item.count}}</td>
     </tr>
     {% endfor %}

@@ -53,7 +53,6 @@
         url: '{% url "storage:add-item-in-release" release.pk %}',
         type: 'GET',
         success: function (data) {
-          console.log(data);
           $('.add-modal').html(data);
         }
       }).done(function () {
@@ -63,12 +62,10 @@
     $('.edit-supply').on('click', function (e) {
       e.preventDefault();
       pk = $(this).data('pk');
-      console.log(pk);
       $.ajax({
         url: '/supply/edit/' + pk + '/',
         type: 'GET',
         success: function (data) {
-          console.log(data);
           $('.edit-modal').html(data);
         }
       }).done(function () {
@@ -79,11 +76,8 @@
       e.preventDefault();
       pk = $(this).data('pk');
       name = $(this).data('name');
-      console.log(pk);
       url = '/supplies/details/delete-item/' + pk + '/';
-      console.log('url for delete unit = ' + url);
       $('#delete-item-from-supply .form').attr('action', url);
-      console.log('delete form action changed')
       $('#delete-item-from-supply .message').html('Удалить "' + name + '"?');
       $('#delete-item-from-supply').modal('show');
     });

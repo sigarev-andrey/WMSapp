@@ -10,6 +10,18 @@ body {
 }
 /*-----------------------------*/
 
+/*Bootstap popover*/
+.popover {
+  background-color: #F24236;
+}
+.popover-body {
+  color: #FFFFFF !important;
+}
+.popover-arrow:after {
+  border-right-color: #F24236 !important;
+}
+/*---------------------------*/
+
 /*Bootstrap alerts*/
 .alert {
   position:fixed; 

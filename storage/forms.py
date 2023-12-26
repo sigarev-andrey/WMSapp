@@ -173,6 +173,9 @@ class SupplyForm(ModelForm):
                 'class': 'form-control'
             }
         )
+        self.fields['contract'].widget.attrs.update({
+            'id': 'contract'
+        })
 
     class Meta:
         model = Supply
@@ -197,6 +200,10 @@ class ItemInSupplyForm(ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+        self.fields['count'].widget.attrs.update({
+            'id': 'count',
+            'placeholder': 'Кол-во'
+        })
 
     class Meta:
         model = ItemInSupply
@@ -257,6 +264,7 @@ class ItemInReleaseForm(ModelForm):
                 'class': 'form-control'
             })
         self.fields['count'].widget.attrs.update({
+            'id': 'count',
             'placeholder': 'Кол-во'
         })
             

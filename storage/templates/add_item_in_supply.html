@@ -5,12 +5,23 @@
         <h5 class="modal-title" id="add-item-label">Добавление позиции</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{% url 'storage:add-item-in-supply' id %}" method="POST" class="form">
+      <form action="{% url 'storage:add-item-in-supply' id %}" method="POST" class="form" novalidate>
         <div class="modal-body">
           {% csrf_token %}
-          <div class="form-floating mb-3">
-            {{ add_item_in_supply_form.item }}
-            <label for="short_number">Позиция</label>
+          <div class="input-group flex-nowrap mb-3">
+            <div class="form-floating w-100">
+              <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
+                type="text" list="items" autocomplete="off">
+                <datalist id="items" placeholder="Позиция">
+                  {% for i in add_item_in_supply_form.fields.item.queryset %}
+                    <option data-value="{{ i.id }}" value="{{ i }}"></option>
+                  {% endfor %}
+                </datalist>
+              <label for="item-datalist">Позиция</label>
+            </div>
+            <button class="btn btn-outline-secondary" type="button" id="clear-input" title="Очистить">
+              <i class="fa fa-eraser"></i>
+            </button>
           </div>
           <div class="form-floating mb-3">
             {{ add_item_in_supply_form.count }}
@@ -25,3 +36,64 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    var datalistInput = document.getElementById('item-datalist');
+    var datalistPopoverEmpty = new bootstrap.Popover(datalistInput, {
+      content: 'Поле не должно быть пустым',
+      trigger: 'manual'
+    });
+    var datalistPopoverError = new bootstrap.Popover(datalistInput, {
+      content: 'Не совпадает ни содним наименованием',
+      trigger: 'manual'
+    });
+    var countInput = document.getElementById('count');
+    var countPopover = new bootstrap.Popover(countInput, {
+      content: 'Введите целое, положительное число, больше 0',
+      trigger: 'manual'
+    })
+    $('#clear-input').click(function () {
+      $('#item-datalist').val('');
+    });
+    $('#item-datalist').click(function() {
+      $(this).css('border-color', '#001427');
+      datalistPopoverEmpty.hide();
+      datalistPopoverError.hide();
+    })
+    $('#count').click(function() {
+      $(this).css('border-color', '#001427');
+      countPopover.hide();
+    })
+  $('.form').submit(function (e) {
+    var datalist_value = $('#item-datalist').val();
+    var count_value = $('#count').val();
+    var datalist_valid = false;
+    var count_valid = false;
+    if (datalist_value == '') {
+      e.preventDefault();
+      $('#item-datalist').css('border-color', '#F24236');
+      datalistPopoverEmpty.show();
+    } else {
+      id = $('#items [value="' + datalist_value + '"]').data('value');
+      if (id != null) {
+        datalist_valid = true;
+      } else {
+        e.preventDefault();
+        $('#item-datalist').css('border-color', '#F24236');
+        datalistPopoverError.show();
+      }
+    }
+  if (Math.floor(count_value) == count_value && $.isNumeric(count_value) && count_value > 0) {
+    count_valid = true;
+  } else {
+    e.preventDefault();
+    $('#count').css('border-color', '#F24236');
+    countPopover.show();
+  }
+  if (datalist_valid === true && count_valid === true) {
+    $('#item-datalist').val(id);
+  }
+  })
+})
+</script>

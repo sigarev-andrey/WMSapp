@@ -30,3 +30,12 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    $('#contract').prop('disabled', true);
+    $('.form').submit(function() {
+      $('#contract').prop('disabled', false);
+    });
+  });
+</script>

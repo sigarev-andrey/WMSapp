@@ -6,25 +6,30 @@
         <h5 class="modal-title" id="add-item-label">Добавление позиции</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{% url 'storage:add-item-in-release' id %}" method="POST" class="form">
+      <form action="{% url 'storage:add-item-in-release' id %}" method="POST" class="form" novalidate>
         <div class="modal-body">
           {% csrf_token %}
-          <div class="input-group form-floating mb-3">
-            <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
-              type="text" list="items" autocomplete="off">
+          <div class="input-group flex-nowrap mb-3">
+            <div class="form-floating w-100">
+              <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
+                type="text" list="items" autocomplete="off">
+              <datalist id="items">
+                {% for i in add_item_in_release_form.fields.item.queryset %}
+                  <option data-value="{{ i.id }}" data-count="{{ i.count }}" value="{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}"></option>
+                {% endfor %}
+              </datalist>
+              <label for="item-datalist">Позиция</label>
+            </div>
             <button class="btn btn-outline-secondary" type="button" id="clear-input" title="Очистить">
               <i class="fa fa-eraser"></i>
             </button>
-            <datalist id="items">
-              {% for i in add_item_in_release_form.fields.item.queryset %}
-                <option data-value="{{ i.id }}" value="{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}"></option>
-              {% endfor %}
-            </datalist>
-            <label for="item-datalist">Позиция</label>
           </div>
-          <div class="form-floating mb-3">
-            {{ add_item_in_release_form.count }}
-            <label for="count">Кол-во</label>
+          <div class="input-group flex-nowrap mb-3">
+            <div class="form-floating w-100">
+              {{ add_item_in_release_form.count }}
+              <label for="count">Кол-во</label>
+            </div>
+            <span class="input-group-text w-25" id="count-label" title="Максимальное кол-во"></span>
           </div>
         </div>
         <div class="modal-footer">
@@ -37,18 +42,85 @@
 </div>
 
 <script>
-  $('.form').submit(function (e) {
-    var value = $('#item-datalist').val();
-    if (value == '') {
-      e.preventDefault();
-      $('#item-datalist').css('border-color', 'red');
+  $(document).ready(function() {
+    var datalistInput = document.getElementById('item-datalist');
+    var datalistPopoverEmpty = new bootstrap.Popover(datalistInput, {
+      content: 'Поле не должно быть пустым',
+      trigger: 'manual'
+    });
+    var datalistPopoverError = new bootstrap.Popover(datalistInput, {
+      content: 'Не совпадает ни содним наименованием',
+      trigger: 'manual'
+    });
+    var countInput = document.getElementById('count');
+    var max_count = 0;
+    var countPopoverWrongNumber = new bootstrap.Popover(countInput, {
+      content: 'Введите целое, положительное число, больше 0',
+      trigger: 'manual'
+    });
+    var countPopoverExcess = new bootstrap.Popover(countInput, {
+      content: 'Превышает максимальное кол-во',
+      trigger: 'manual'
+    });
+    $('#clear-input').click(function () {
+      $('#item-datalist').val('');
+      $('#count-label').html('');
+    });
+    $('#item-datalist').click(function() {
+      $(this).css('border-color', '#001427');
+      datalistPopoverEmpty.hide();
+      datalistPopoverError.hide();
+    })
+    $('#count').click(function() {
+      $(this).css('border-color', '#001427');
+      countPopoverWrongNumber.hide();
+      countPopoverExcess.hide();
+    })
+    $('#item-datalist').on('input', function () {
+    var val = this.value;
+    if($('#items option').filter(function() {
+        return this.value.toUpperCase() === val.toUpperCase();        
+    }).length) {
+      max_count = $('#items [value="' + val + '"]').data('count');
+      $('#count-label').html('max=' + max_count);
     } else {
-      id = $('#items [value="' + value + '"]').data('value');
-      if (id != null) {
-        $('#item-datalist').val(id);
-      } else {
-        e.preventDefault();
-      }
+      $('#count-label').html('');
     }
   })
+  $('.form').submit(function (e) {
+    var datalist_value = $('#item-datalist').val();
+    var count_value = $('#count').val();
+    var datalist_valid = false;
+    var count_valid = false;
+    if (datalist_value == '') {
+      e.preventDefault();
+      $('#item-datalist').css('border-color', '#F24236');
+      datalistPopoverEmpty.show();
+    } else {
+      var id = $('#items [value="' + datalist_value + '"]').data('value');
+      if (id != null) {
+        datalist_valid = true;
+      } else {
+        e.preventDefault();
+        $('#item-datalist').css('border-color', '#F24236');
+        datalistPopoverError.show();
+      }
+    }
+    if (Math.floor(count_value) == count_value && $.isNumeric(count_value) && count_value > 0) {
+      if (count_value > max_count) {
+        e.preventDefault();
+        countPopoverExcess.show();
+      } else {
+        count_valid = true;
+      }
+    } else {
+      e.preventDefault();
+      $('#count').css('border-color', '#F24236');
+      countPopoverWrongNumber.show();
+    }
+    if (datalist_valid === true && count_valid === true) {
+      $('#item-datalist').val(id);
+    }
+  })
+})
 </script>
