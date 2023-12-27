@@ -97,7 +97,7 @@
       $('#item-datalist').css('border-color', '#F24236');
       datalistPopoverEmpty.show();
     } else {
-      var id = $('#items [value="' + datalist_value + '"]').data('value');
+      var id = $('#items [value="' + datalist_value.replace(/"/g, '\\"') + '"]').data('value');
       if (id != null) {
         datalist_valid = true;
       } else {
