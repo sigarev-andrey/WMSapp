@@ -81,7 +81,7 @@
     if($('#items option').filter(function() {
         return this.value.toUpperCase() === val.toUpperCase();        
     }).length) {
-      max_count = $('#items [value="' + val + '"]').data('count');
+      max_count = $('#items [value="' + val.replace(/"/g, '\\"') + '"]').data('count');
       $('#count-label').html('max=' + max_count);
     } else {
       $('#count-label').html('');
