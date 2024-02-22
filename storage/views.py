@@ -597,10 +597,13 @@ def delete_supply(request, id=False):
 def details_supply(request, id):
     supply = get_object_or_404(Supply, pk=id)
     items = ItemInSupply.objects.filter(supply=supply.pk)
+    paginator = Paginator(items, 10)
+    page_number = request.GET.get('page')
+    page_items = paginator.get_page(page_number)
     return render(request,
                   'details_supply.html',
                   {'supply': supply,
-                   'items': items})
+                   'items': page_items})
 
 @permission_required('storage.add_iteminsupply')
 @transaction.atomic
