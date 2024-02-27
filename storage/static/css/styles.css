@@ -274,3 +274,14 @@ body {
     border: solid 1px #EDECE6;
 }
 /*-----------------------------------------*/
+
+/*Row style for highlight recently added item*/
+#current-row {
+  animation: 3s current-row;
+}
+
+@keyframes current-row {
+  0% {
+    background-color: #bcf516;
+  }
+}

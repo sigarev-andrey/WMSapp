@@ -596,14 +596,22 @@ def delete_supply(request, id=False):
 @permission_required('storage.view_iteminsupply')
 def details_supply(request, id):
     supply = get_object_or_404(Supply, pk=id)
-    items = ItemInSupply.objects.filter(supply=supply.pk)
-    paginator = Paginator(items, 10)
-    page_number = request.GET.get('page')
+    items = ItemInSupply.objects.filter(supply=supply.pk).order_by('pk')
+    page_size = 10
+    paginator = Paginator(items, page_size)
+    item_id = request.session.get('item_id')
+    if item_id:
+        del request.session['item_id']
+        items_count = items.filter(pk__lt=item_id).count()
+        page_number = items_count // page_size + 1
+    else:
+        page_number = request.GET.get('page')
     page_items = paginator.get_page(page_number)
     return render(request,
                   'details_supply.html',
                   {'supply': supply,
-                   'items': page_items})
+                   'items': page_items,
+                   'current_id': item_id})
 
 @permission_required('storage.add_iteminsupply')
 @transaction.atomic
@@ -619,10 +627,16 @@ def add_item_in_supply(request, id):
             if not create:
                 item.count += add_item_in_supply_form.cleaned_data['count']
             item.save()
-            add_item_in_supply_form.save()
+            item_in_supply, create = ItemInSupply.objects.get_or_create(item=add_item_in_supply_form.cleaned_data['item'],
+                                                                        supply=supply,
+                                                                        defaults={'count': add_item_in_supply_form.cleaned_data['count']})
+            if not create:
+                item_in_supply.count += add_item_in_supply_form.cleaned_data['count']
+            item_in_supply.save()
             messages.add_message(request,
                                  messages.SUCCESS,
                                  'Позиция успешно добавлена')
+            request.session['item_id'] = item_in_supply.pk
             return redirect('/supplies/details/' + str(id) + '/')
         messages.add_message(request,
                  messages.ERROR,

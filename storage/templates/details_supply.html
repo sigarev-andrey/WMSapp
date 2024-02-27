@@ -30,7 +30,7 @@
   </thead>
   <tbody>
     {% for item in items %}
-    <tr>
+    <tr {% if item.pk == current_id %}id="current-row"{% endif %}>
       <td class="align-middle">{{ item.item }}</td>
       <td class="align-middle text-center">{{ item.item.unit }}</td>
       <td class="align-middle text-center">{{ item.count }}</td>
