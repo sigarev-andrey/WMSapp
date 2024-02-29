@@ -380,26 +380,38 @@ def items(request):
         'text_filter': request.GET.get('text_filter'),
     }
     html_queries = clean_filters(html_queries)
-    paginator = Paginator(items, 10)
-    page_number = request.GET.get('page')
+    page_size = 10
+    paginator = Paginator(items, page_size)
+    current_id = request.session.get('current_id')
+    print(current_id)
+    if current_id:
+        del request.session['current_id']
+        current_item = Item.objects.get(pk=current_id)
+        item_name = str(current_item.manufacturer or '') + ' ' + current_item.article + ' ' + current_item.description
+        print(item_name)
+        position = items.filter(full_item_name__lt=item_name).count()
+        page_number = position // page_size + 1
+    else:
+        page_number = request.GET.get('page')
     page_items = paginator.get_page(page_number)
     filter_form = StorageFilterForm(initial=html_queries)
     return render(request,
                   'items.html',
                   {'items': page_items,
                    'filter_form': filter_form,
-                   'filters': html_queries})
+                   'filters': html_queries,
+                   'current_id': current_id})
 
 @permission_required('storage.add_item')
 def add_item(request):
     if (request.method == 'POST'):
-        print(request.POST)
         add_item_form = ItemForm(request.POST)
         if add_item_form.is_valid():
             messages.add_message(request,
                                  messages.SUCCESS,
                                  'Позиция успешно добавлена')
-            add_item_form.save()
+            item = add_item_form.save()
+            request.session['current_id'] = item.id
             return redirect('/items/')
         messages.add_message(request,
                         messages.ERROR,

@@ -46,7 +46,7 @@
   </thead>
   <tbody>
     {% for item in items %}
-    <tr>
+    <tr {% if item.id == current_id %}id='current-row'{% endif %}>
       <td class="align-middle">{{ item.manufacturer|default_if_none:'' }} {{ item.article }} {{ item.description }}</td>
       <td class="text-center align-middle">{{ item.category }}</td>
       <td class="text-center align-middle">{{ item.unit }}</td>
