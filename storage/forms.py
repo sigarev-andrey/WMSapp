@@ -267,6 +267,7 @@ class ItemInReleaseForm(ModelForm):
             'id': 'count',
             'placeholder': 'Кол-во'
         })
+        self.fields['item'].queryset = Storage.objects.filter(count__gt=0)
             
     class Meta:
         model = ItemInRelease
