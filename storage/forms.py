@@ -255,7 +255,7 @@ class ReleaseForm(ModelForm):
 class ItemInReleaseForm(ModelForm):
 
     #for future usage for filtering items by contract
-    #contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False)
+    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -266,6 +266,9 @@ class ItemInReleaseForm(ModelForm):
         self.fields['count'].widget.attrs.update({
             'id': 'count',
             'placeholder': 'Кол-во'
+        })
+        self.fields['contract'].widget.attrs.update({
+            'id': 'contract',
         })
         self.fields['item'].queryset = Storage.objects.filter(count__gt=0)
             

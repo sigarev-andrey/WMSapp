@@ -9,13 +9,17 @@
       <form action="{% url 'storage:add-item-in-release' id %}" method="POST" class="form" novalidate>
         <div class="modal-body">
           {% csrf_token %}
+          <div class="form-floating w-100 mb-3">
+            {{ add_item_in_release_form.contract }}
+            <label for="count">Договор</label>
+          </div>
           <div class="input-group flex-nowrap mb-3">
             <div class="form-floating w-100">
               <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
                 type="text" list="items" autocomplete="off">
               <datalist id="items">
                 {% for i in add_item_in_release_form.fields.item.queryset %}
-                  <option data-value="{{ i.id }}" data-count="{{ i.count }}" value="{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}"></option>
+                  <option data-value="{{ i.id }}" data-count="{{ i.count }}" data-contract="{{ i.contract }}" value="{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}"></option>
                 {% endfor %}
               </datalist>
               <label for="item-datalist">Позиция</label>
@@ -62,9 +66,20 @@
       content: 'Превышает максимальное кол-во',
       trigger: 'manual'
     });
-    $('#clear-input').click(function () {
+    $('#clear-input').click(function() {
       $('#item-datalist').val('');
       $('#count-label').html('');
+    });
+    $('#contract').on('change', function() {
+	    var opt = $(this).find('option:selected');
+      console.log(opt.text());
+	    $('#items option').prop('disabled', false);
+      $('#item-datalist').val('');
+      $('#count-label').html('');
+	    if(opt.length > 0 && opt.text() != '---------') {
+		    $('#items option').prop('disabled', true);
+		    $('#items option[data-contract="'+opt.text()+'"]').prop('disabled', false);
+	    }
     });
     $('#item-datalist').click(function() {
       $(this).css('border-color', '#001427');
