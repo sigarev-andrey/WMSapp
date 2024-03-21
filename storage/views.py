@@ -813,10 +813,14 @@ def delete_release(request, id=None):
 def details_release(request, id=None):
     release = get_object_or_404(Release, pk=id)
     items = ItemInRelease.objects.filter(release=release.pk)
+    page_size = 10
+    paginator = Paginator(items, page_size)
+    page_number = request.GET.get('page')
+    page_items = paginator.get_page(page_number)
     return render(request,
                   'details_release.html',
                   {'release': release,
-                   'items': items})
+                   'items': page_items})
 
 @permission_required('storage.add_iteminrelease')
 @transaction.atomic

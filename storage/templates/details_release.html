@@ -32,7 +32,7 @@
   <tbody>
     {% for item in items %}
     <tr>
-      <td class="align-middle">{{ item.item.item.manufacturer }} {{ item.item.item.article }} {{ item.item.item.description }}</td>
+      <td class="align-middle">{{ item.item.item }}</td>
       <td class="align-middle text-center">{{ item.item.contract }}</td>
       <td class="align-middle text-center">{{ item.item.item.unit }}</td>
       <td class="align-middle text-center">{{ item.count }}</td>
@@ -45,6 +45,48 @@
     {% endfor %}
   </tbody>
 </table>
+
+<!--Pagination-->
+{% if items.has_other_pages %}
+  <nav aria-label="Pagination">
+    <ul class="pagination">
+      {% if items.number > 1 %}
+        <li class="page-item"><a class="page-link" href="?page=1">Перв.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Перв.</a></li>
+      {% endif %}
+      {% if items.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">Пред.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
+      {% endif %}
+      {% if items.number|add:-3 > 1 %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% for p in items.paginator.page_range %}
+        {% if items.number == p %}
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% elif p >= items.number|add:-3 and p <= items.number|add:3 %}
+          <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if items.number|add:+3 < items.paginator.num_pages %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% if items.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">След.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+      {% if items.number < items.paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}">Посл.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
 <script>
   $('document').ready(function () {
     $('.add-item').on('click', function (e) {
