@@ -547,7 +547,7 @@ def delete_contract(request, id=None):
 
 @permission_required('storage.view_supply')
 def supplies(request):
-    supplies = Supply.objects.all()
+    supplies = Supply.objects.all().order_by('date')
     page_size = 10
     paginator = Paginator(supplies, page_size)
     page_number = request.GET.get('page')
@@ -749,7 +749,7 @@ def delete_staff(request, id=False):
 
 @permission_required('storage.view_release')
 def releases(request):
-    releases = Release.objects.all()
+    releases = Release.objects.all().order_by('date')
     page_size = 10
     paginator = Paginator(releases, page_size)
     page_number = request.GET.get('page')
