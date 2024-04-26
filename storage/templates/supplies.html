@@ -50,6 +50,48 @@
     {% endfor %}
   </tbody>
 </table>
+
+<!--Pagination-->
+{% if supplies.has_other_pages %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if supplies.number > 1 %}
+        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link">Перв.</a></li>
+      {% endif %}
+      {% if supplies.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ supplies.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
+      {% endif %}
+      {% if supplies.number|add:-3 > 1 %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% for p in supplies.paginator.page_range %}
+        {% if supplies.number == p %}
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% elif p >= supplies.number|add:-3 and p <= supplies.number|add:3 %}
+          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if supplies.number|add:3 < supplies.paginator.num_pages %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% if supplies.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ supplies.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+      {% if supplies.number < supplies.paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?page={{ supplies.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
 <script>
   $('document').ready(function () {
     $('.add-supply').on('click', function (e) {

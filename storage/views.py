@@ -548,9 +548,13 @@ def delete_contract(request, id=None):
 @permission_required('storage.view_supply')
 def supplies(request):
     supplies = Supply.objects.all()
+    page_size = 10
+    paginator = Paginator(supplies, page_size)
+    page_number = request.GET.get('page')
+    page_items = paginator.get_page(page_number)
     return render(request,
                   'supplies.html',
-                  {'supplies': supplies})
+                  {'supplies': page_items})
 
 @permission_required('storage.add_supply')
 def add_supply(request):
@@ -746,9 +750,13 @@ def delete_staff(request, id=False):
 @permission_required('storage.view_release')
 def releases(request):
     releases = Release.objects.all()
+    page_size = 10
+    paginator = Paginator(releases, page_size)
+    page_number = request.GET.get('page')
+    page_items = paginator.get_page(page_number)
     return render(request,
                   'releases.html',
-                  {'releases': releases})
+                  {'releases': page_items})
 
 @permission_required('storage.add_release')
 def add_release(request):

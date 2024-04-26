@@ -29,7 +29,7 @@
   <tbody>
     {% for release in releases %}
     <tr>
-      <td class="align-middle">{{ release.date }}</td>
+      <td class="align-middle">{{ release.date|date:'d.m.Y' }}</td>
       <td class="align-middle">{{ release.contract }}</td>
       <td class="align-middle">{{ release.staff | default_if_none:'' }} {{ release.company }}</td>
       <td class="align-middle">{{ release.description }}</td>
@@ -52,6 +52,48 @@
     {% endfor %}
   </tbody>
 </table>
+
+<!--Pagination-->
+{% if releases.has_other_pages %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if releases.number > 1 %}
+        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link">Перв.</a></li>
+      {% endif %}
+      {% if releases.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ releases.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
+      {% endif %}
+      {% if releases.number|add:-3 > 1 %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% for p in releases.paginator.page_range %}
+        {% if releases.number == p %}
+          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+        {% elif p >= releases.number|add:-3 and p <= releases.number|add:3 %}
+          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if releases.number|add:3 < releases.paginator.num_pages %}
+        <li class="page-item"><a class="page-link">...</a></li>
+      {% endif %}
+      {% if releases.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ releases.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
+      {% endif %}
+      {% if releases.number < releases.paginator.num_pages %}
+        <li class="page-item"><a class="page-link" href="?page={{ releases.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
 <script>
   $('document').ready(function () {
     $('.add-release').on('click', function (e) {
