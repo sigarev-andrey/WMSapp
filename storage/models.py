@@ -105,6 +105,8 @@ class Contract(models.Model):
         str = self.short_number
         if self.date:
             str += ' от ' + self.date.strftime('%d.%m.%Y')
+        if self.description:
+            str += ' ' + self.description
         return str
     
 class Storage(models.Model):

@@ -63,5 +63,6 @@ urlpatterns = [
     path('releases/edit/<int:id>/', views.edit_release, name='edit-release'),
     path('releases/delete/<int:id>/', views.delete_release, name='delete-release'),
     path('releases/details/<int:id>/', views.details_release, name='details-release'),
-    path('releases/details/<int:id>/add-item/', views.add_item_in_release, name='add-item-in-release')
+    path('releases/details/<int:id>/add-item/', views.add_item_in_release, name='add-item-in-release'),
+    path('releases/details/delete-item/<int:id>/', views.delete_item_from_release, name='delete-item-from-release')
 ]

@@ -19,7 +19,7 @@
                 type="text" list="items" autocomplete="off">
               <datalist id="items">
                 {% for i in add_item_in_release_form.fields.item.queryset %}
-                  <option data-value="{{ i.id }}" data-count="{{ i.count }}" data-contract="{{ i.contract }}" value="{{ i.item.manufacturer.name }} {{ i.item.article }} {{ i.contract }}"></option>
+                  <option data-value="{{ i.id }}" data-count="{{ i.count }}" data-contract="{{ i.contract }}" value="{{ i.manufacturer_name|default_if_none:'' }} {{ i.item_article }} {{ i.contract }} {{ i.item_description }}"></option>
                 {% endfor %}
               </datalist>
               <label for="item-datalist">Позиция</label>

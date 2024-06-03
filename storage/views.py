@@ -867,6 +867,24 @@ def add_item_in_release(request, id):
                     {'add_item_in_release_form': add_item_in_release_form,
                      'id': id})
 
+@permission_required('storage.delete_iteminrelease')
+@transaction.atomic
+def delete_item_from_release(request, id):
+    item_in_release = get_object_or_404(ItemInRelease, pk=id)
+    release_id = item_in_release.release.pk
+    item_in_storage = get_object_or_404(Storage,
+                                        item=item_in_release.item.item,
+                                        contract=item_in_release.item.contract)
+    try:
+        item_in_storage.count += item_in_release.count
+        item_in_storage.save()
+        item_in_release.delete()
+    except Exception as e:
+        messages.add_message(request,
+                                messages.ERROR,
+                                e)
+    return redirect('/releases/details/' + str(release_id) + '/')
+
 def get_width(num_characters):
     '''Function to get MS Excel row width according string lenght'''
     return int((1 + num_characters) * 256)

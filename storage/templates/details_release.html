@@ -37,7 +37,7 @@
       <td class="align-middle text-center">{{ item.item.item.unit }}</td>
       <td class="align-middle text-center">{{ item.count }}</td>
       <td class="align-middle text-center">
-        <a class="btn btn-outline-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
+        <a class="btn btn-outline-success text-center delete-item-from-release" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -114,18 +114,19 @@
         $('#edit-unit').modal('show');
       });
     });
-    $('.delete-item-from-supply').on('click', function (e) {
+    $('.delete-item-from-release').on('click', function (e) {
       e.preventDefault();
       pk = $(this).data('pk');
       name = $(this).data('name');
-      url = '/supplies/details/delete-item/' + pk + '/';
-      $('#delete-item-from-supply .form').attr('action', url);
-      $('#delete-item-from-supply .message').html('Удалить "' + name + '"?');
-      $('#delete-item-from-supply').modal('show');
+      url = '/releases/details/delete-item/' + pk + '/';
+      $('#delete-item-from-release .form').attr('action', url);
+      $('#delete-item-from-release .message').html('Удалить "' + name + '"?');
+      $('#delete-item-from-release').modal('show');
     });
   });
 </script>
 <div class="add-modal"></div>
 <div class="edit-modal"></div>
 {% include 'delete_item_from_supply.html' %}
+{% include 'delete_item_from_release.html' %}
 {% endblock content %}

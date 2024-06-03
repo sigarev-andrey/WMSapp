@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import ModelForm
+from django.db.models import F
+from django.db.models.functions import Coalesce
 from .models import *
 
 class StorageFilterForm(forms.Form):
@@ -270,7 +272,11 @@ class ItemInReleaseForm(ModelForm):
         self.fields['contract'].widget.attrs.update({
             'id': 'contract',
         })
-        self.fields['item'].queryset = Storage.objects.filter(count__gt=0)
+        #self.fields['item'].queryset = Storage.objects.filter(count__gt=0)
+        qs = Storage.objects.all().annotate(manufacturer_name=F('item__manufacturer__name'),
+                                            item_article=F('item__article'),
+                                            item_description=F('item__description')).filter(count__gt=0)
+        self.fields['item'].queryset = qs
             
     class Meta:
         model = ItemInRelease
