@@ -30,7 +30,7 @@
     {% for release in releases %}
     <tr>
       <td class="align-middle">{{ release.date|date:'d.m.Y' }}</td>
-      <td class="align-middle">{{ release.contract }}</td>
+      <td class="align-middle" title="{{ release.contract }}">{{ release.contract.short_number }}</td>
       <td class="align-middle">{{ release.staff | default_if_none:'' }} {{ release.company }}</td>
       <td class="align-middle">{{ release.description }}</td>
       <td class="text-center">

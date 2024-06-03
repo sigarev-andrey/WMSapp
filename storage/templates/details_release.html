@@ -33,7 +33,7 @@
     {% for item in items %}
     <tr>
       <td class="align-middle">{{ item.item.item }}</td>
-      <td class="align-middle text-center">{{ item.item.contract }}</td>
+      <td class="align-middle text-center" title="{{ item.item.contract }}">{{ item.item.contract.short_number }}</td>
       <td class="align-middle text-center">{{ item.item.item.unit }}</td>
       <td class="align-middle text-center">{{ item.count }}</td>
       <td class="align-middle text-center">

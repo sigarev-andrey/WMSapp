@@ -29,7 +29,7 @@
     {% for supply in supplies %}
     <tr>
       <td class="align-middle">{{ supply.date|date:'d.m.Y' }}</td>
-      <td class="align-middle">{{ supply.contract }}</td>
+      <td class="align-middle" title="{{ supply.contract }}">{{ supply.contract.short_number }}</td>
       <td class="align-middle">{{ supply.description }}</td>
       <td class="text-center">
         <a class="btn btn-outline-success text-center open-supply" title="Подробно" href="{% url 'storage:details-supply' supply.pk %}">
