@@ -12,7 +12,6 @@ urlpatterns = [
     #storage path
     path('storage/', views.storage, name='storage'),
     path('storage_with_contract/', views.storage_with_contract, name='storage_with_contract'),
-    path('storage/export/', views.export_storage_to_excel, name='storage-export'),
     path('manufacturers/', views.manufacturers, name='manufacturers'),
     path('manufacturers/add/', views.add_manufacturer, name='add-manufacturer'),
     path('manufacturers/edit/<int:id>/', views.edit_manufacturer, name='edit-manufacturer'),
@@ -64,5 +63,8 @@ urlpatterns = [
     path('releases/delete/<int:id>/', views.delete_release, name='delete-release'),
     path('releases/details/<int:id>/', views.details_release, name='details-release'),
     path('releases/details/<int:id>/add-item/', views.add_item_in_release, name='add-item-in-release'),
-    path('releases/details/delete-item/<int:id>/', views.delete_item_from_release, name='delete-item-from-release')
+    path('releases/details/delete-item/<int:id>/', views.delete_item_from_release, name='delete-item-from-release'),
+    #reports
+    path('storage/export/', views.export_storage_to_excel, name='storage-export'),
+    path('contracts/report-by-contract/', views.report_by_contract, name='report-by-contract'),
 ]

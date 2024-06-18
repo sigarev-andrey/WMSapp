@@ -284,3 +284,15 @@ class ItemInReleaseForm(ModelForm):
             'item': forms.TextInput(),
         }
         exclude = ['release']
+
+class ReportByContractForm(forms.Form):
+    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False, empty_label='Не выбран')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['contract'].widget.attrs.update({
+            'class': 'form-control',
+            'id': 'contract',
+            'placeholder': 'Договор',
+            'required': 'required'
+        })

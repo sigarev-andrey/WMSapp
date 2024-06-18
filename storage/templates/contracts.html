@@ -3,6 +3,10 @@
 {% block title %} Договоры {% endblock title %}
 
 {% block buttons %}
+<a class="btn btn-outline-success text-center me-1 report-by-contract" style="width: 40px; height: 40px; font-size: 17px"
+  title="Отчёт по договору">
+  <i class="fa fa-file-excel-o"></i>
+</a>
 <button type="button" class="btn btn-outline-primary me-1 add-contract" title="Добавить">
   <i class="fa fa-plus"></i>
 </button>
@@ -50,6 +54,19 @@
 </table>
 <script>
   $('document').ready(function () {
+    $('.report-by-contract').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/contracts/report-by-contract/',
+        type: 'GET',
+        success: function (data) {
+          console.log(data);
+          $('.report-by-contract-modal').html(data);
+        }
+      }).done(function () {
+        $('#report-by-contract').modal('show');
+      });
+    });
     $('.add-contract').on('click', function (e) {
       e.preventDefault();
       $.ajax({
@@ -94,5 +111,6 @@
 </script>
 <div class="add-modal"></div>
 <div class="edit-modal"></div>
+<div class="report-by-contract-modal"></div>
 {% include 'delete_contract.html' %}
 {% endblock content %}

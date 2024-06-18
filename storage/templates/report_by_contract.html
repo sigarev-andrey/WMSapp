@@ -1,0 +1,23 @@
+<div class="modal fade" id="report-by-contract" tabindex="-1" aria-labelledby="report-by-contract-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="report-by-contract-label">Отчёт по договору</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'storage:report-by-contract' %}" method="POST" class="form">
+          <div class="modal-body">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+              {{ report_by_contract_form.contract }}
+              <label for="contract">Договор</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="submit" type="submit" class="btn btn-outline-success">Ок</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
