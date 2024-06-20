@@ -974,12 +974,13 @@ def generate_report_supplies_sheet(ws, items, item_model, styles):
 def generate_report_releases_sheet(ws, item_totals, items_in_release, styles):
     columns_widths = [0, 0, 0, 0]
     row_num = 0
-    for storage_id, total_count in item_totals:
-        item = Storage.objects.get(id=storage_id).item
-        contract = Storage.objects.get(id=storage_id).contract
+    for item_id, total_count in item_totals:
+        #item = Storage.objects.get(id=storage_id).item
+        item = Item.objects.get(id=item_id)
         write_data(ws, row_num, [str(item), 'Всего', total_count], styles['totals_style'], columns_widths)
         row_num += 1
         for row in items_in_release.filter(item__item__id=item.id):
+            contract = Storage.objects.get(id=row.item.id).contract
             write_data(ws, row_num, ['', row.release.date.isoformat(), row.count, contract.short_number], styles['default_style'], columns_widths)
             row_num += 1
     set_column_widths(ws, columns_widths)
@@ -998,13 +999,13 @@ def report_by_contract(request):
         
         # Поставки
         supplies = ItemInSupply.objects.filter(supply__contract=contract_id)
-        supplies_group = supplies.values_list('item_id').annotate(total_count=Sum('count')).order_by()
+        supplies_group = supplies.values_list('item').annotate(total_count=Sum('count')).order_by('item')
         ws = wb.add_sheet('Поставки')
         generate_report_supplies_sheet(ws, supplies_group, supplies, styles)
 
         # Выдачи
         releases = ItemInRelease.objects.filter(release__contract=contract_id)
-        releases_group = releases.values_list('item__id').annotate(total_count=Sum('count')).order_by()
+        releases_group = releases.values_list('item__item').annotate(total_count=Sum('count')).order_by('item__item')
         ws = wb.add_sheet('Выдачи')
         generate_report_releases_sheet(ws, releases_group, releases, styles)
         
