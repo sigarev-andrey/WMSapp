@@ -947,84 +947,6 @@ def export_storage_to_excel(request):
     
     wb.save(response)
     return response
-'''
-def report_by_contract(request):
-    if (request.method == 'POST'):
-        contract_id = request.POST['contract']
-        contract = Contract.objects.get(id = contract_id)
-        response = HttpResponse(content_type='application/ms-excel')
-        file_name = f'contract_report_{contract.short_number}_{date.today()}.xls'
-        file_name = file_name.replace(' ', '_').replace('/', '-')
-        response['Content-Disposition'] = f"attachment; filename={escape_uri_path(file_name)}"
-        supplies = ItemInSupply.objects.filter(supply__contract=contract_id)
-        supplies_group = supplies.values('item').annotate(total_count=Sum('count')).order_by()
-        wb = xlwt.Workbook(encoding='utf-8')
-        row_num = 0
-        ws = wb.add_sheet('Поставки')
-        default_style = xlwt.easyxf('font: name Calibri, height 240; align: vert center, horiz left;')
-        totals_style = xlwt.easyxf('font: bold 1, name Calibri, height 240; align: vert center, horiz left;')
-        align_right_style = xlwt.easyxf('font: name Calibri, height 240; align: vert center, horiz right;')
-        columns_width = [0, 0, 0]
-        for total in supplies_group:
-            item = Item.objects.get(id=total['item'])
-            rows = supplies.filter(item=total['item'])
-            row_num += 1
-            ws.write(row_num, 0, item.__str__(), totals_style)
-            if get_width(len(item.__str__())) > columns_width[0]:
-                columns_width[0] = get_width(len(item.__str__()))
-            ws.write(row_num, 1, 'Всего', totals_style)
-            if get_width(len('Всего')) > columns_width[1]:
-                columns_width[1] = get_width(len('Всего'))
-            ws.write(row_num, 2, total['total_count'], totals_style)
-            if get_width(len(str(total['total_count']))) > columns_width[2]:
-                columns_width[2] = get_width(len(str(total['total_count'])))
-            for row in rows:
-                row_num += 1
-                ws.write(row_num, 1, row.supply.date.isoformat(), default_style)
-                if get_width(len(row.supply.date.isoformat())) > columns_width[1]:
-                    columns_width[1] = get_width(len(row.supply.date.isoformat()))
-                ws.write(row_num, 2, row.count, default_style)
-                if get_width(len(str(row.count))) > columns_width[2]:
-                    columns_width[2] = get_width(len(str(row.count)))
-        for i in range(3):
-            ws.col(i).width = columns_width[i]
-        releases = ItemInRelease.objects.filter(release__contract=contract_id)
-        releases_group = releases.values('item__item__id').annotate(total_count=Sum('count')).order_by()
-        row_num = 0
-        ws = wb.add_sheet('Выдачи')
-        columns_width = [0, 0, 0]
-        for total in releases_group:
-            item = Item.objects.get(id=total['item__item__id'])
-            rows = releases.filter(item__item__id=total['item__item__id'])
-            row_num += 1
-            ws.write(row_num, 0, item.__str__(), totals_style)
-            if get_width(len(item.__str__())) > columns_width[0]:
-                columns_width[0] = get_width(len(item.__str__()))
-            ws.write(row_num, 1, 'Всего', totals_style)
-            if get_width(len('Всего')) > columns_width[1]:
-                columns_width[0] = get_width(len('Всего'))
-            ws.write(row_num, 2, total['total_count'], totals_style)
-            if get_width(len(str(total['total_count']))) > columns_width[2]:
-                columns_width[2] = get_width(len(str(total['total_count'])))
-            for row in rows:
-                row_num += 1
-                ws.write(row_num, 0, row.item.contract.short_number, align_right_style)
-                ws.write(row_num, 1, row.release.date.isoformat(), default_style)
-                if get_width(len(row.release.date.isoformat())) > columns_width[1]:
-                    columns_width[1] = get_width(len(row.release.date.isoformat()))
-                ws.write(row_num, 2, row.count, default_style)
-                if get_width(len(str(row.count))) > columns_width[2]:
-                    columns_width[2] = get_width(len(str(row.count)))
-        for i in range(3):
-            ws.col(i).width = columns_width[i]
-        wb.save(response)
-        return response
-    else:
-        report_by_contract_form = ReportByContarctForm()
-    return render(request,
-                    'report_by_contract.html',
-                    {'report_by_contract_form': report_by_contract_form})
-'''
 
 def set_column_widths(ws, columns_widths):
     for i, width in enumerate(columns_widths):
@@ -1052,12 +974,13 @@ def generate_report_supplies_sheet(ws, items, item_model, styles):
 def generate_report_releases_sheet(ws, item_totals, items_in_release, styles):
     columns_widths = [0, 0, 0, 0]
     row_num = 0
-    for storage_id, total_count in item_totals:
-        item = Storage.objects.get(id=storage_id).item
-        contract = Storage.objects.get(id=storage_id).contract
+    for item_id, total_count in item_totals:
+        #item = Storage.objects.get(id=storage_id).item
+        item = Item.objects.get(id=item_id)
         write_data(ws, row_num, [str(item), 'Всего', total_count], styles['totals_style'], columns_widths)
         row_num += 1
         for row in items_in_release.filter(item__item__id=item.id):
+            contract = Storage.objects.get(id=row.item.id).contract
             write_data(ws, row_num, ['', row.release.date.isoformat(), row.count, contract.short_number], styles['default_style'], columns_widths)
             row_num += 1
     set_column_widths(ws, columns_widths)
@@ -1076,13 +999,13 @@ def report_by_contract(request):
         
         # Поставки
         supplies = ItemInSupply.objects.filter(supply__contract=contract_id)
-        supplies_group = supplies.values_list('item_id').annotate(total_count=Sum('count')).order_by()
+        supplies_group = supplies.values_list('item').annotate(total_count=Sum('count')).order_by('item')
         ws = wb.add_sheet('Поставки')
         generate_report_supplies_sheet(ws, supplies_group, supplies, styles)
 
         # Выдачи
         releases = ItemInRelease.objects.filter(release__contract=contract_id)
-        releases_group = releases.values_list('item__id').annotate(total_count=Sum('count')).order_by()
+        releases_group = releases.values_list('item__item').annotate(total_count=Sum('count')).order_by('item__item')
         ws = wb.add_sheet('Выдачи')
         generate_report_releases_sheet(ws, releases_group, releases, styles)
         
