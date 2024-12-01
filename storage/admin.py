@@ -48,7 +48,7 @@ class ItemAdmin(admin.ModelAdmin):
 admin.site.register(Item, ItemAdmin)
 
 class StorageAdmin(admin.ModelAdmin):
-    list_display = ('item', 'get_unit', 'count', 'get_category')
+    list_display = ('item', 'get_contract','get_unit', 'count', 'get_category')
     search_fields = ['item__manufacturer__name', 'item__article', 'item__description']
     list_filter = ['item__manufacturer', 'item__category']
     autocomplete_fields = ['item']
@@ -58,9 +58,13 @@ class StorageAdmin(admin.ModelAdmin):
     def get_unit(self, obj):
         return obj.item.unit
     
-    @admin.display(ordering='item__category', description='Category')
+    @admin.display(ordering='storage__category', description='Category')
     def get_category(self, obj):
         return obj.item.category
+    
+    @admin.display(ordering='contract__short_number', description='Contract')
+    def get_contract(self, obj):
+        return obj.contract.short_number
 
     def changelist_view(self, request, extra_context=None):
         extra_context = {'title': 'Позиции на складе'}
