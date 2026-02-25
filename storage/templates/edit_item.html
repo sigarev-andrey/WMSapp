@@ -15,7 +15,7 @@
               <i class="fa fa-eraser"></i>
             </button>
             <datalist id="manufacturers">
-              {% for i in edit_item_form.fields.manufacturer.queryset %}
+              {% for i in form.fields.manufacturer.queryset %}
                 <option data-value="{{ i.id }}" value="{{ i.name }}"></option>
               {% endfor %}
             </datalist>
@@ -49,7 +49,7 @@
 
 <script>
   $('document').ready(function () {
-    var id = "{{ edit_item_form.manufacturer.value }}";
+    var id = "{{ form.manufacturer.value }}";
     var value = $(`[data-value="${id}"]`).val();
     $('#manufacturer-datalist').val(value);
   });
