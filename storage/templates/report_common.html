@@ -1,0 +1,43 @@
+<div class="modal fade" id="report-common-modal" tabindex="-1" aria-labelledby="report-common-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="report-common-label">Отчёт общий</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'storage:report-common' %}" method="POST" class="form">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            {{ report_common_form.text_filter }}
+            <label for="contract">Наименование</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ report_common_form.category }}
+            <label for="contract">Категория</label>
+          </div>
+          <div class="form-check mb-3">
+            {{ report_common_form.with_contract }}
+            <label class="form-check-label" for="with-contract">Добавить срез по договору</label>
+          </div>
+          <div class="form-floating mb-3">
+            {{ report_common_form.contract }}
+            <label for="contract">Договор</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="submit" type="submit" class="btn btn-outline-success">Ок</button>
+          <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+$('#with-contract').click(function () {
+  var checked = this.checked;
+  console.log(checked);
+  $('#contract').prop('disabled', !checked);
+});
+</script>

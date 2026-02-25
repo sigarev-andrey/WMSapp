@@ -2,28 +2,30 @@
 
 {% block title %} Выдача {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block income_link_active %} class="nav-link" {% endblock income_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link active dropdown-toggle" {% endblock dictionary_link_active %}
-
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-release" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+Выдача
+</span>
+<span class="align-middle float-end">
+  <button type="button" class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-release' %}"
+    data-target="release"
+    title="Добавить выдачу">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
 
 {% block content %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Дата</th>
-      <th>Договор</th>
-      <th>ФИО, фирма</th>
-      <th>Описание</th>
-      <th class="text-center" style="width: 10%;">Подробно</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="10%">Дата</th>
+      <th width="15%">Договор</th>
+      <th width="30%">ФИО, фирма</th>
+      <th width="30%">Описание</th>
+      <th width="15%" class="text-center">Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -34,17 +36,23 @@
       <td class="align-middle">{{ release.staff | default_if_none:'' }} {{ release.company }}</td>
       <td class="align-middle">{{ release.description }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center open-release" title="Подробно" href="{% url 'storage:details-release' release.pk %}">
+        <a class="btn btn-outline-primary btn-circle text-center open-supply" 
+          title="Подробно"
+          href="{% url 'storage:details-release' release.pk %}">
           <i class="fa fa-search"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center edit-release" title="Изменить" data-pk="{{ release.pk }}">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-release' release.pk %}"
+          data-target="release"
+          title="Изменить выдачу">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-release" title="Удалить" data-pk="{{ release.pk }}" data-name="{{ release.date }} {{ release.contract }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-release' release.pk %}"
+          data-target="release"
+          title="Удалить выдачу">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -53,86 +61,6 @@
   </tbody>
 </table>
 
-<!--Pagination-->
-{% if releases.has_other_pages %}
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      {% if releases.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
-      {% else %}
-      <li class="page-item disabled"><a class="page-link">Перв.</a></li>
-      {% endif %}
-      {% if releases.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ releases.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
-      {% endif %}
-      {% if releases.number|add:-3 > 1 %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% for p in releases.paginator.page_range %}
-        {% if releases.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-        {% elif p >= releases.number|add:-3 and p <= releases.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% endif %}
-      {% endfor %}
-      {% if releases.number|add:3 < releases.paginator.num_pages %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% if releases.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ releases.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
-      {% endif %}
-      {% if releases.number < releases.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ releases.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-{% endif %}
+{% include 'pagination.html' %}
 
-<script>
-  $('document').ready(function () {
-    $('.add-release').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/releases/add/',
-        type: 'GET',
-        success: function (data) {
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-release').modal('show');
-      });
-    });
-    $('.edit-release').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      $.ajax({
-        url: '/releases/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-release').modal('show');
-      });
-    });
-    $('.delete-release').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      url = '/releases/delete/' + pk + '/';
-      $('#delete-release .form').attr('action', url);
-      $('#delete-release .message').html('Удалить поставку "' + name + '"?');
-      $('#delete-release').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
-{% include 'delete_release.html' %}
 {% endblock content %}

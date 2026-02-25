@@ -2,18 +2,25 @@
 
 {% block title %} Склад {% endblock title %}
 
-{% block buttons %}
+
+<!--
 <a class="btn btn-outline-success text-center me-1" style="width: 40px; height: 40px; font-size: 17px" href="{% url 'storage:storage-export' %}?by_contract=0{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}"
   title="Экспорт в Excel">
   <i class="fa fa-file-excel-o"></i>
 </a>
+-->
+{% block table_title %}
+Склад - общий
+{% endblock table_title %}
+
+{% block buttons %}
 <button class="btn btn-outline-primary me-1" type="button" style="width: 40px; height: 40px; font-size: 17px;" data-bs-toggle="collapse"
   data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
   <i class="fa fa-filter"></i>
 </button>
 {% endblock buttons %}
 
-{% block filters %}
+{% block filter %}
 <form action="{%url 'storage:storage' %}" method="GET" class="form">
   {% csrf_token %}
   <div class="form-floating mb-3">
@@ -26,24 +33,24 @@
   </div>
   <button type="submit" class="btn btn-outline-primary" title="Применить фильтры">Применить</button>
 </form>
-{% endblock filters %}
+{% endblock filter %}
 
 {% block content %}
 <div class="filter">
 </div>
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header align-middle">
     <tr>
-      <th>Наименование</th>
-      <th class="text-center">Категория</th>
-      <th class="text-center">Ед. изм.</th>
-      <th class="text-center">Кол-во</th>
+      <th width="70%">Наименование</th>
+      <th class="text-center" width="16%">Категория</th>
+      <th class="text-center" width="7%">Ед. изм.</th>
+      <th class="text-center" width="7%">Кол-во</th>
     </tr>
   </thead>
   <tbody>
-    {% for item in storage %}
+    {% for item in page_obj %}
     <tr>
-      <td class="align-middle">{{item.full_item_name}}</td>
+      <td class="align-middle text-truncate" title="{{item.full_item_name}}">{{item.full_item_name}}</td>
       <td class="text-center align-middle">{{item.category}}</td>
       <td class="text-center align-middle">{{item.unit}}</td>
       <td class="text-center align-middle">{{item.total_count}}</td>
@@ -52,45 +59,6 @@
   </tbody>
 </table>
 
-<!--Pagination-->
-{% if storage.has_other_pages %}
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      {% if storage.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
-      {% else %}
-      <li class="page-item disabled"><a class="page-link">Перв.</a></li>
-      {% endif %}
-      {% if storage.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ storage.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
-      {% endif %}
-      {% if storage.number|add:-3 > 1 %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% for p in storage.paginator.page_range %}
-        {% if storage.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-        {% elif p >= storage.number|add:-3 and p <= storage.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% endif %}
-      {% endfor %}
-      {% if storage.number|add:3 < storage.paginator.num_pages %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% if storage.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ storage.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
-      {% endif %}
-      {% if storage.number < storage.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ storage.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-{% endif %}
+{% include 'pagination.html' %}
 
 {% endblock content %}

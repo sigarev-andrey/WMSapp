@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-supply" tabindex="-1" aria-labelledby="edit-supply-label"
+<div class="modal fade" id="edit" tabindex="-1" aria-labelledby="edit-supply-label"
   aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -10,15 +10,15 @@
         <div class="modal-body">
           {% csrf_token %}
           <div class="form-floating mb-3">
-            {{ edit_supply_form.date }}
+            {{ form.date }}
             <label for="category-name">Дата</label>
           </div>
           <div class="form-floating mb-3">
-            {{ edit_supply_form.contract }}
+            {{ form.contract }}
             <label for="category-name">Договор</label>
           </div>
           <div class="form-floating mb-3">
-            {{ edit_supply_form.description }}
+            {{ form.description }}
             <label for="category-name">Описание</label>
           </div>
         </div>

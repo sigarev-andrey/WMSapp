@@ -2,40 +2,48 @@
 
 {% block title %} Поставки {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block supply_link_active %} class="nav-link active" {% endblock supply_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
-
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-item" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+{% if supply.contract.short_number == "Без договора" %}
+Поставка от {{supply.date|date:'d.m.Y'}} <b>{{supply.contract}}</b>
+{% else %}
+Поставка от {{supply.date|date:'d.m.Y'}} по договору <b>№{{supply.contract.short_number}}</b> {{supply.description}}
+{% endif %}
+</span>
+<span class="align-middle float-end">
+  <button type="button"
+    class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-item-in-supply' supply.pk %}"
+    data-target="iteminsupply"
+    title="Добавить позицию">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
 
 {% block content %}
-{% if supply.contract.short_number == "Без договора" %}
-  <p>Поставка от {{supply.date|date:'d.m.Y'}} <b>{{supply.contract}}</b></p>
-{% else %}
-  <p>Поставка от {{supply.date|date:'d.m.Y'}} по договору <b>№{{supply.contract}}</b> {{supply.description}}</p>
-{% endif %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Наименование</th>
-      <th class="text-center">Ед. изм.</th>
-      <th class="text-center">Кол-во</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="70%">Наименование</th>
+      <th class="text-center" width="10%">Ед. изм.</th>
+      <th class="text-center" width="10%">Кол-во</th>
+      <th class="text-center" width="10%">Удалить</th>
     </tr>
   </thead>
   <tbody>
-    {% for item in items %}
-    <tr {% if item.pk == current_id %}id="current-row"{% endif %}>
-      <td class="align-middle">{{ item.item }}</td>
-      <td class="align-middle text-center">{{ item.item.unit }}</td>
-      <td class="align-middle text-center">{{ item.count }}</td>
+    {% for i in items %}
+    <tr {% if i.pk == current_id %}id="current-row"{% endif %}>
+      <td class="align-middle text-truncate">{{ i.item }}</td>
+      <td class="align-middle text-center">{{ i.item.unit }}</td>
+      <td class="align-middle text-center">{{ i.count }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-item-from-supply" title="Удалить" data-pk="{{ item.pk }}" data-name="{{ item.item }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-item-from-supply' i.pk %}"
+          data-target="iteminsupply"
+          title="Удалить позицию">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -44,86 +52,6 @@
   </tbody>
 </table>
 
-<!--Pagination-->
-{% if items.has_other_pages %}
-  <nav aria-label="Pagination">
-    <ul class="pagination">
-      {% if items.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1">Перв.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Перв.</a></li>
-      {% endif %}
-      {% if items.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">Пред.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
-      {% endif %}
-      {% if items.number|add:-3 > 1 %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% for p in items.paginator.page_range %}
-        {% if items.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-        {% elif p >= items.number|add:-3 and p <= items.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-        {% endif %}
-      {% endfor %}
-      {% if items.number|add:+3 < items.paginator.num_pages %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% if items.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">След.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
-      {% endif %}
-      {% if items.number < items.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}">Посл.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-{% endif %}
+{% include 'pagination.html' %}
 
-<script>
-  $('document').ready(function () {
-    $('.add-item').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '{% url "storage:add-item-in-supply" supply.pk %}',
-        type: 'GET',
-        success: function (data) {
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-item').modal('show');
-      });
-    });
-    $('.edit-supply').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      $.ajax({
-        url: '/supply/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-unit').modal('show');
-      });
-    });
-    $('.delete-item-from-supply').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      let name = $(this).data('name');
-      url = '/supplies/details/delete-item/' + pk + '/';
-      $('#delete-item-from-supply .form').attr('action', url);
-      $('#delete-item-from-supply .message').html('Удалить "' + name + '"?');
-      $('#delete-item-from-supply').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
-{% include 'delete_item_from_supply.html' %}
 {% endblock content %}

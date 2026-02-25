@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-item" tabindex="-1" aria-labelledby="edit-item-label" aria-hidden="true">
+<div class="modal fade" id="edit" tabindex="-1" aria-labelledby="edit-item-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -22,19 +22,19 @@
             <label for="manufacturer-datalist">Производитель</label>
           </div>
           <div class="form-floating mb-3">
-            {{ edit_item_form.article }}
+            {{ form.article }}
             <label for="article">Артикул</label>
           </div>
           <div class="form-floating mb-3">
-            {{ edit_item_form.category }}
+            {{ form.category }}
             <label for="category_name">Категория</label>
           </div>
           <div class="form-floating mb-3">
-            {{ edit_item_form.description }}
+            {{ form.description }}
             <label for="description">Описание</label>
           </div>
           <div class="form-floating mb-3">
-            {{ edit_item_form.unit }}
+            {{ form.unit }}
             <label for="unit_name">Ед. Изм.</label>
           </div>
         </div>

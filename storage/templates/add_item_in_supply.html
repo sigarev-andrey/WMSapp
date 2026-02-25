@@ -1,11 +1,11 @@
-<div class="modal fade" id="add-item" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true">
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="add-item-label">Добавление позиции</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{% url 'storage:add-item-in-supply' id %}" method="POST" class="form" novalidate>
+      <form action="{% url 'storage:add-item-in-supply' supply_pk %}" method="POST" class="form" novalidate>
         <div class="modal-body">
           {% csrf_token %}
           <div class="input-group flex-nowrap mb-3">
@@ -13,7 +13,7 @@
               <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
                 type="text" list="items" autocomplete="off">
                 <datalist id="items" placeholder="Позиция">
-                  {% for i in add_item_in_supply_form.fields.item.queryset %}
+                  {% for i in form.fields.item.queryset %}
                     <option data-value="{{ i.id }}" value="{{ i }}"></option>
                   {% endfor %}
                 </datalist>
@@ -24,7 +24,7 @@
             </button>
           </div>
           <div class="form-floating mb-3">
-            {{ add_item_in_supply_form.count }}
+            {{ form.count }}
             <label for="full_number">Кол-во</label>
           </div>
         </div>
