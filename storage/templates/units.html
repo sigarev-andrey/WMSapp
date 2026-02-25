@@ -2,19 +2,28 @@
 
 {% block title %} Ед. изм. {% endblock title %}
 
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-unit" style="width: 40px;" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+Единица измерения
+</span>
+<span class="align-middle float-end">
+  <button type="button"
+    class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-unit' %}"
+    data-target="unit"
+    title="Добавить">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
 
 {% block content %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Наименование</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="90%">Наименование</th>
+      <th class="text-center" width="10%">Изменить</th>
     </tr>
   </thead>
   <tbody>
@@ -22,12 +31,18 @@
     <tr>
       <td class="align-middle">{{ unit.name }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center edit-unit" style="width: 40px;" title="Изменить" data-pk="{{ unit.pk }}">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-unit' unit.pk %}"
+          data-target="unit"
+          title="Изменить ед. изм.">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-unit" title="Удалить" style="width: 40px;" data-pk="{{ unit.pk }}" data-name="{{ unit.name }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-unit' unit.pk %}"
+          data-target="unit"
+          title="Удалить ед. изм.">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -35,51 +50,7 @@
     {% endfor %}
   </tbody>
 </table>
-<script>
-  $('document').ready(function () {
-    $('.add-unit').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/units/add/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-unit').modal('show');
-      });
-    });
-    $('.edit-unit').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      console.log(pk);
-      $.ajax({
-        url: '/units/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-unit').modal('show');
-      });
-    });
-    $('.delete-unit').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      console.log(pk);
-      url = '/units/delete/' + pk + '/';
-      console.log('url for delete unit = ' + url);
-      $('#delete-unit .form').attr('action', url);
-      console.log('delete form action changed')
-      $('#delete-unit .message').html('Удалить ед. изм. "' + name + '"?');
-      $('#delete-unit').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
-{% include 'delete_unit.html' %}
+
+{% include 'pagination.html' %}
+
 {% endblock content %}

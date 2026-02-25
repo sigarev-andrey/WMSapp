@@ -2,24 +2,28 @@
 
 {% block title %} Фирма {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block supply_link_active %} class="nav-link active" {% endblock supply_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
-
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-company" style="width: 40px;" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+Категория
+</span>
+<span class="align-middle float-end">
+  <button type="button" class="btn btn-outline-primary action-button"
+    data-action="add"
+    data-url="{% url 'storage:add-company' %}"
+    data-target="company"
+    title="Добавить фирму">
+    <i class="fa fa-plus"></i>
+    Добавить
+  </button>
+</span>
+{% endblock table_title %}
 
 {% block content %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
       <th>Наименование</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th class="text-center" style="width: 10%;">Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -27,12 +31,18 @@
     <tr>
       <td class="align-middle">{{ company.name }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center edit-company" style="width: 40px;" title="Изменить" data-pk="{{ company.pk }}">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-company' company.pk %}"
+          data-target="company"
+          title="Изменить компанию">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-company" style="width: 40px;" title="Удалить" data-pk="{{ company.pk }}" data-name="{{ company.name }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-company' company.pk %}"
+          data-target="company"
+          title="Удалить компанию">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -40,51 +50,6 @@
     {% endfor %}
   </tbody>
 </table>
-<script>
-  $('document').ready(function () {
-    $('.add-company').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/companies/add/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-company').modal('show');
-      });
-    });
-    $('.edit-company').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      console.log(pk);
-      $.ajax({
-        url: '/companies/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-company').modal('show');
-      });
-    });
-    $('.delete-company').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      console.log(pk);
-      url = '/companies/delete/' + pk + '/';
-      console.log('url for delete supply = ' + url);
-      $('#delete-company .form').attr('action', url);
-      console.log('delete form action changed')
-      $('#delete-company .message').html('Удалить фирму "' + name + '"?');
-      $('#delete-company').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
-{% include 'delete_company.html' %}
 {% endblock content %}
+
+{% include 'pagination.html' %}

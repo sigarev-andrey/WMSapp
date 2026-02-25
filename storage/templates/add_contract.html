@@ -1,4 +1,4 @@
-<div class="modal fade" id="add-contract" tabindex="-1" aria-labelledby="add-contract-label" aria-hidden="true">
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="add-contract-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -9,19 +9,19 @@
         <div class="modal-body">
           {% csrf_token %}
           <div class="form-floating mb-3">
-            {{ add_contract_form.short_number }}
+            {{ form.short_number }}
             <label for="short_number">Сокращённый номер</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_contract_form.full_number }}
+            {{ form.full_number }}
             <label for="full_number">Полный номер</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_contract_form.date }}
+            {{ form.date }}
             <label for="date">Дата подписания</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_contract_form.description }}
+            {{ form.description }}
             <label for="short_number">Описание</label>
           </div>
         </div>

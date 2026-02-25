@@ -4,10 +4,17 @@ from django.db.models import F
 from django.db.models.functions import Coalesce
 from .models import *
 
-class StorageFilterForm(forms.Form):
+
+class FilterForm(forms.Form):
     text_filter = forms.CharField(max_length=255, required=False)
+    name_filter = forms.CharField(max_length=255, required=False)
+    surname_filter = forms.CharField(max_length=255, required=False)
+    patronymic_filter = forms.CharField(max_length=255, required=False)
     category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label='Не выбрана')
     contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False, empty_label='Не выбран')
+    start_date = forms.DateField(required=False)
+    end_date = forms.DateField(required=False)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in iter(self.fields):
@@ -18,6 +25,18 @@ class StorageFilterForm(forms.Form):
             'id': 'text_filter',
             'placeholder': 'Наименование'
         })
+        self.fields['name_filter'].widget.attrs.update({
+            'id': 'name_filter',
+            'placeholder': 'Имя'
+        })
+        self.fields['surname_filter'].widget.attrs.update({
+            'id': 'surname_filter',
+            'placeholder': 'Фамилия'
+        })
+        self.fields['patronymic_filter'].widget.attrs.update({
+            'id': 'patronymic_filter',
+            'placeholder': 'Отчество'
+        })
         self.fields['category'].widget.attrs.update({
             'id': 'category',
             'placeholder': 'Категория'
@@ -26,6 +45,23 @@ class StorageFilterForm(forms.Form):
             'id': 'contract',
             'placeholder': 'Договор'
         })
+        self.fields['start_date'].widget = forms.widgets.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={
+                'type': 'date',
+                'class': 'form-control'
+            }
+        )
+        self.fields['end_date'].widget = forms.widgets.DateInput(
+            format=('%Y-%m-%d'),
+            attrs={
+                'type': 'date',
+                'class': 'form-control'
+            }
+        )
+
+class SupplyFilterForm(forms.Form):
+    pass
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -286,7 +322,7 @@ class ItemInReleaseForm(ModelForm):
         exclude = ['release']
 
 class ReportByContractForm(forms.Form):
-    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False, empty_label='Не выбран')
+    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=True, empty_label='Не выбран')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -295,4 +331,33 @@ class ReportByContractForm(forms.Form):
             'id': 'contract',
             'placeholder': 'Договор',
             'required': 'required'
+        })
+
+class ReportCommonForm(forms.Form):
+    text_filter = forms.CharField(max_length=255, required=False)
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, empty_label='Не выбрана')
+    with_contract = forms.BooleanField(required=False)
+    contract = forms.ModelChoiceField(queryset=Contract.objects.all(), required=False, disabled=True, empty_label='Не выбран')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['text_filter'].widget.attrs.update({
+            'class': 'form-control',
+            'id': 'text_filter',
+            'placeholder': 'Наименование'
+        })
+        self.fields['category'].widget.attrs.update({
+            'class': 'form-control',
+            'id': 'category',
+            'placeholder': 'Категория'
+        })
+        self.fields['with_contract'].widget.attrs.update({
+            'class': 'form-check-input',
+            'id': 'with-contract'
+        })
+        self.fields['contract'].widget.attrs.update({
+            'class': 'form-control',
+            'id': 'contract',
+            'placeholder': 'Договор'
         })

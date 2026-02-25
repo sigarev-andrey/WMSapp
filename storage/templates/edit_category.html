@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit-category" tabindex="-1" aria-labelledby="edit-category-label" aria-hidden="true">
+<div class="modal fade" id="edit" tabindex="-1" aria-labelledby="edit-category-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -9,12 +9,12 @@
         <div class="modal-body">
           {% csrf_token %}
           <div class="form-floating mb-3">
-            {{ edit_category_form.name }}
+            {{ form.name }}
             <label for="category-name">Наименование</label>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-success">Добавить</button>
+          <button type="submit" class="btn btn-outline-success">Изменить</button>
           <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Отменить</button>
         </div>
       </form>

@@ -10,83 +10,143 @@
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"
     integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
 
-  {% load bootstrap5 %}
-  {% bootstrap_css %}
-  {% bootstrap_javascript %}
-  {% bootstrap_messages %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="{% static "css/styles.css" %}" />
   <script src="{% static "scripts/styling.js" %}"></script>
+  <script src="{% static "scripts/crud_actions.js" %}"></script>
+  <script src="{% static "scripts/nav_panel.js" %}"></script>
+
+  <link link rel="shortcut icon" type="image/png" href="{%  static 'img/favicon.png' %}">
 
 </head>
+
 <body>
+  {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="alert {{ message.tags }} fade show" role="alert">
+    {% else %}
+    <div class="alert alert-info fade show" role="alert">
+    {% endif %}
+      {{ message }}
+    </div>
+    {% endfor %}
+  {% endif %}
   <div class="container-md">
-    <nav class="navbar navbar-expand-lg mb-3">
-      <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="width: 50px; height: 40px;">
-          <i class="fa fa-align-justify"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                СКЛАД
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/storage/">Общий</a></li>
-                {% if not request.user|has_group:'guests' %}
-                  <li><a class="dropdown-item" href="/storage_with_contract/">По договорам</a></li>
-                {% endif %}
-              </ul>
-            </li>
-            {% if not request.user|has_group:'guests' %}
-            <li class="nav-item">
-              <a class="nav-link" href="/supplies/">ПОСТАВКИ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/releases/">ВЫДАЧА</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                СПРАВОЧНИКИ
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/manufacturers/">Производители</a></li>
-                <li><a class="dropdown-item" href="/units/">Ед. изм.</a></li>
-                <li><a class="dropdown-item" href="/categories/">Категории</a></li>
-                <li><a class="dropdown-item" href="/items/">Позиция</a></li>
-                <li><a class="dropdown-item" href="/contracts/">Договор</a></li>
-                <li><a class="dropdown-item" href="/staff/">Персонал</a></li>
-                <li><a class="dropdown-item" href="/companies/">Фирма</a></li>
-              </ul>
-            </li>
-            {% endif %}
+
+  <button id="menuToggle"
+  class="menu-toggle"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#sidebarOffcanvas"
+  aria-controls="sidebarOffcanvas"
+  aria-expanded="false"
+  type="button">
+    <span class="burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+
+  <div class="offcanvas offcanvas-start noselect" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sidebarLabel">Меню</h5>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+
+    <div class="sidebar-header">
+      <img src="{% static "img/logo_menu.svg" %}" class="float-left" alt="logo">
+    </div>
+
+      <nav class="nav flex-column">
+
+        <div class="submenu-header" data-target="#storage-submenu">
+          <span class="submenu-title">Склад</span>
+          <button class="btn btn-sm btn-toggle" type="button"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+        </div>
+        <div class="collapse" id="storage-submenu">
+          <ul class="list-unstyled small ps-3">
+            <li><a href="/storage" class="nav-link">Общий</a></li>
+            <li><a href="/storage_with_contract" class="nav-link">По договорам</a></li>
           </ul>
-        </div>      
-        <div class="d-flex justify-content-end">
-          {% block buttons %}
-          {% endblock buttons %}
-          <div class="input-group">
-            <label class="input-group-text" for="user-info" title="Имя пользователя">{{ user.get_username }}</label>
-            <a href="/logout/">
-            <button class="btn btn-outline-danger" type="button" style="width: 40px; height: 40px; font-size: 18px;" title="Выход">
+        </div>
+        <a class="nav-link" href="/supplies">Поставки</a>
+        <a class="nav-link" href="/releases">Выдача</a>
+        <div class="submenu-header" data-target="#dicts-submenu">
+          <span class="submenu-title">Справочники</span>
+          <button class="btn btn-sm btn-toggle" type="button"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+        </div>
+        <div class="collapse" id="dicts-submenu">
+          <ul class="list-unstyled small ps-3">
+            <li><a href="/manufacturers" class="nav-link">Производители</a></li>
+            <li><a href="/units" class="nav-link">Ед. изм.</a></li>
+            <li><a href="/categories" class="nav-link">Категории</a></li>
+            <li><a href="/items" class="nav-link">Позиция</a></li>
+            <li><a href="/contracts" class="nav-link">Договор</a></li>
+            <li><a href="/staff" class="nav-link">Персонал</a></li>
+            <li><a href="/companies" class="nav-link">Фирма</a></li>
+          </ul>
+        </div>
+        <hr>
+        <div class="submenu-header" data-target="#filters-submenu">
+          <span class="submenu-title">Фильтры</span>
+          <button class="btn btn-sm btn-toggle" type="button"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+        </div>
+        <div class="collapse" id="filters-submenu">
+          <ul class="list-unstyled small ps-3">
+          {% block filters %}
+          {% endblock filters %}
+          </ul>
+        </div>
+        <div class="submenu-header" data-target="#reports-submenu">
+          <span class="submenu-title">Отчёты</span>
+          <button class="btn btn-sm btn-toggle" type="button"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+        </div>
+        <div class="collapse" id="reports-submenu">
+          <ul class="list-unstyled small ps-3">
+            <li><a href=""
+              class="nav-link"
+              id="report-button"
+              data-url="/reports/report-by-contract/"
+              data-modal-id="report-by-contract-modal">По договору</a></li>
+            <li><a href="" 
+              class="nav-link"
+              id="report-button"
+              data-url="/reports/report-common/"
+              data-modal-id="report-common-modal">Склад</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer mt-auto">
+        <hr>
+        <div>© 2025 ООО "НИЦ "ФОРС"</div>
+        <div>{{ user.get_username }}
+          <a href="/logout/">
+            <button class="btn btn-outline-danger small-button float-end text-center" type="button" title="Выход">
               <i class="fa fa-sign-out"></i>
             </button>
-            </a>
-          </div>
+          </a>
         </div>
       </div>
-    </nav>
-    <div>
+
     </div>
-    <div class="collapse" id="filters">
-      {% block filters %}
-      {% endblock filters %}
+  </div>
+
+    <div class="container-md mb-2 mt-2 px-0 table-title">
+      {% block table_title %}
+      {% endblock table_title %}
     </div>
+
     <div>
       {% block content %}
       {% endblock content %}
     </div>
+
   </div>
 </body>
 </html>

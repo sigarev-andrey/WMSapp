@@ -2,20 +2,26 @@
 
 {% block title %} Позиция {% endblock title %}
 
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-item" style="width: 40px;" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-<button class="btn btn-outline-primary me-1" type="button" style="width: 40px; height: 40px; font-size: 17px;" data-bs-toggle="collapse"
-  data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
-  <i class="fa fa-filter"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+Позиция
+</span>
+<span class="align-middle float-end">
+  <button type="button"
+    class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-item' %}"
+    data-target="item"
+    title="Добавить">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
 
 {% block filters %}
 <form action="{%url 'storage:items' %}" method="GET" class="form">
   {% csrf_token %}
-  <div class="form-floating mb-3">
+  <div class="form-floating mb-3 mt-3">
     {{ filter_form.text_filter }}
     <label for="text_filter">Наименование</label>
   </div>
@@ -34,30 +40,34 @@
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Наименование</th>
-      <th class="text-center">Категория</th>
-      <th class="text-center">Ед. изм.</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="65%">Наименование</th>
+      <th class="text-center" width="15%">Категория</th>
+      <th class="text-center" width="10%">Ед. изм.</th>
+      <th class="text-center" width="10%">Изменить</th>
     </tr>
   </thead>
   <tbody>
     {% for item in items %}
     <tr {% if item.id == current_id %}id='current-row'{% endif %}>
-      <td class="align-middle">{{ item.manufacturer|default_if_none:'' }} {{ item.article }} {{ item.description }}</td>
+      <td class="align-middle text-truncate">{{ item.manufacturer|default_if_none:'' }} {{ item.article }} {{ item.description }}</td>
       <td class="text-center align-middle">{{ item.category }}</td>
       <td class="text-center align-middle">{{ item.unit }}</td>
-      <td class="text-center align-middle">
-        <a class="btn btn-outline-success text-center edit-item" title="Изменить" style="width: 40px;" data-pk="{{ item.pk }}">
+      <td class="text-center">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-item' item.pk %}"
+          data-target="item"
+          title="Изменить позицию">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-item" title="Удалить" style="width: 40px;" data-pk="{{ item.pk }}"
-          data-name="{{ item.manufacturer }} {{ item.article }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-item' item.pk %}"
+          data-target="item"
+          title="Удалить позиция">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -66,86 +76,6 @@
   </tbody>
 </table>
 
-<!--Pagination-->
-{% if items.has_other_pages %}
-  <nav aria-label="Pagination">
-    <ul class="pagination">
-      {% if items.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Перв.</a></li>
-      {% endif %}
-      {% if items.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Пред.</a></li>
-      {% endif %}
-      {% if items.number|add:-3 > 1 %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% for p in items.paginator.page_range %}
-        {% if items.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% elif p >= items.number|add:-3 and p <= items.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% endif %}
-      {% endfor %}
-      {% if items.number|add:3 < items.paginator.num_pages %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% if items.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">След.</a></li>
-      {% endif %}
-      {% if items.number < items.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-{% endif %}
+{% include 'pagination.html' %}
 
-<script>
-  $('document').ready(function () {
-    $('.add-item').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/items/add/',
-        type: 'GET',
-        success: function (data) {
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-item').modal('show');
-      });
-    });
-    $('.edit-item').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      $.ajax({
-        url: '/items/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-item').modal('show');
-      });
-    });
-    $('.delete-item').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      url = '/items/delete/' + pk + '/';
-      $('#delete-item .form').attr('action', url);
-      $('#delete-item .message').html('Удалить позицию "' + name + '"?');
-      $('#delete-item').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>  
-<div class="edit-modal"></div>
-{% include 'delete_item.html' %}
 {% endblock content %}

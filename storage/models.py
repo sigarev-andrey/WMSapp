@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.db.models import UniqueConstraint
+from django.shortcuts import get_object_or_404
+
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=250)
@@ -97,7 +99,7 @@ class Contract(models.Model):
 
     class Meta:
         unique_together = ('short_number', 'full_number', 'date')
-        ordering = ['date']
+        ordering = ['-date']
         verbose_name = 'Договор'
         verbose_name_plural = 'Договоры'
 
@@ -138,6 +140,12 @@ class Supply(models.Model):
     description = models.TextField(blank=True)
     items = models.ManyToManyField(Item, through='ItemInSupply')
 
+    class Meta:
+        ordering = ['date']
+
+    def __str__(self):
+        return 'Поставка от ' + str(self.date) + ' по договору ' + self.contract.short_number
+
 class ItemInSupply(models.Model):
     item = models.ForeignKey(Item,
                              on_delete=models.PROTECT)
@@ -145,10 +153,19 @@ class ItemInSupply(models.Model):
                                on_delete=models.PROTECT)
     count = models.PositiveIntegerField()
 
+    class Meta:
+        ordering = ['item']
+    
+    def __str__(self):
+        return self.item.__str__()
+
 class Staff(models.Model):
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     patronymic = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['surname', 'name', 'patronymic']
 
     def __str__(self) -> str:
         return self.surname + ' ' + self.name[0] + '. ' + self.patronymic[0] + '.'
@@ -195,13 +212,10 @@ class Release(models.Model):
                              name='without_staff'),
         ]
         ordering = ['date']
-        constraints = [
-            UniqueConstraint(fields=['date', 'contract', 'staff', 'company'],
-                             name='with_staff'),
-            UniqueConstraint(fields=['date', 'contract', 'company'],
-                             condition=Q(staff=None),
-                             name='without_staff'),
-        ]
+    
+    def __str__(self):
+        return 'Выдача от ' + str(self.date) + ' по договору ' + self.contract.short_number
+
 
 class ItemInRelease(models.Model):
     item = models.ForeignKey(Storage,
@@ -213,3 +227,6 @@ class ItemInRelease(models.Model):
     class Meta:
         unique_together = ('item', 'release')
         ordering = ['item']
+    
+    def __str__(self):
+        return self.item.__str__()

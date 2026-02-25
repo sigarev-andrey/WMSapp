@@ -1,4 +1,4 @@
-<div class="modal fade" id="add-item" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true"
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true"
   dats-bs-focus="false">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -6,11 +6,11 @@
         <h5 class="modal-title" id="add-item-label">Добавление позиции</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{% url 'storage:add-item-in-release' id %}" method="POST" class="form" novalidate>
+      <form action="{% url 'storage:add-item-in-release' release_pk %}" method="POST" class="form" novalidate>
         <div class="modal-body">
           {% csrf_token %}
           <div class="form-floating w-100 mb-3">
-            {{ add_item_in_release_form.contract }}
+            {{ form.contract }}
             <label for="count">Договор</label>
           </div>
           <div class="input-group flex-nowrap mb-3">
@@ -18,7 +18,7 @@
               <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
                 type="text" list="items" autocomplete="off">
               <datalist id="items">
-                {% for i in add_item_in_release_form.fields.item.queryset %}
+                {% for i in form.fields.item.queryset %}
                   <option data-value="{{ i.id }}" data-count="{{ i.count }}" data-contract="{{ i.contract }}" value="{{ i.manufacturer_name|default_if_none:'' }} {{ i.item_article }} {{ i.contract }} {{ i.item_description }}"></option>
                 {% endfor %}
               </datalist>
@@ -30,7 +30,7 @@
           </div>
           <div class="input-group flex-nowrap mb-3">
             <div class="form-floating w-100">
-              {{ add_item_in_release_form.count }}
+              {{ form.count }}
               <label for="count">Кол-во</label>
             </div>
             <span class="input-group-text w-25" id="count-label" title="Максимальное кол-во"></span>

@@ -2,26 +2,49 @@
 
 {% block title %} Персонал {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block supply_link_active %} class="nav-link active" {% endblock supply_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
+{% block filters %}
+<form action="{%url 'storage:staff' %}" method="GET" class="form">
+  {% csrf_token %}
+  <div class="form-floating mb-3 mt-3">
+    {{ filter_form.name_filter }}
+    <label for="name_filter">Имя</label>
+  </div>
+  <div class="form-floating mb-3">
+    {{ filter_form.surname_filter }}
+    <label for="surname_filter">Фамилия</label>
+  </div>
+  <div class="form-floating mb-3">
+    {{ filter_form.patronymic_filter }}
+    <label for="patronymic_filter">Отчество</label>
+  </div>
+  <button type="submit" class="btn btn-outline-primary" title="Применить фильтры">Применить</button>
+</form>
+{% endblock filters %}
 
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-staff" style="width: 40px;" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+Персонал
+</span>
+<span class="align-middle float-end">
+  <button type="button" class="btn btn-outline-primary action-button"
+    data-action="add"
+    data-url="{% url 'storage:add-staff' %}"
+    data-target="staff"
+    title="Добавить">
+    <i class="fa fa-plus"></i>
+    Добавить
+  </button>
+</span>
+{% endblock table_title %}
 
 {% block content %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Фамилия</th>
-      <th>Имя</th>
-      <th>Отчество</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="30%">Фамилия</th>
+      <th width="30%">Имя</th>
+      <th width="30%">Отчество</th>
+      <th class="text-center" width="10%">Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -31,12 +54,18 @@
       <td class="align-middle">{{ person.name }}</td>
       <td class="align-middle">{{ person.patronymic }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center edit-staff" style="width: 40px;" title="Изменить" data-pk="{{ person.pk }}">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-staff' person.pk %}"
+          data-target="staff"
+          title="Изменить работника">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-staff" style="width: 40px;" title="Удалить" data-pk="{{ person.pk }}" data-name="{{ person }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-staff' person.pk %}"
+          data-target="staff"
+          title="Удалить работника">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -44,49 +73,7 @@
     {% endfor %}
   </tbody>
 </table>
-<script>
-  $('document').ready(function () {
-    $('.add-staff').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/staff/add/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-staff').modal('show');
-      });
-    });
-    $('.edit-staff').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      $.ajax({
-        url: '/staff/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-staff').modal('show');
-      });
-    });
-    $('.delete-staff').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      console.log('Get PK ' + pk);
-      name = $(this).data('name');
-      console.log('Get name ' + name);
-      url = '/staff/delete/' + pk + '/';
-      console.log('Get URL ' + url);
-      $('#delete-staff .form').attr('action', url);
-      $('#delete-staff .message').html('Удалить "' + name + '"?');
-      $('#delete-staff').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
-{% include 'delete_staff.html' %}
+
+{% include 'pagination.html' %}
+
 {% endblock content %}

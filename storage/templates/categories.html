@@ -1,32 +1,49 @@
 {% extends "main.html" %}
 
-{% block title %} Категории {% endblock title %}
+{% block title %} Категория {% endblock title %}
 
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-category" style="width: 40px;" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block table_title %}
+<span class="align-middle">
+Категория
+</span>
+<span class="align-middle float-end">
+  <button type="button"
+    class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-category' %}"
+    data-target="category"
+    title="Добавить">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
+
+{% block filters %}
+<form action="{%url 'storage:categories' %}" method="GET" class="form" id="filter-form">
+  {% csrf_token %}
+  <div class="form-floating filter-input mb-3 mt-3">
+    {{ filter_form.text_filter }}
+    <label for="text_filter">Наименование</label>
+  </div>
+    <button type="submit"
+      class="btn btn-outline-primary filter-ok-button"
+      title="Применить фильтры">
+      Применить
+    </button>
+    <button type="button"
+      class="btn btn-outline-primary filter-clear-button"
+      title="Очистить фильтры">
+      Очистить
+    </button>
+</form>
+{% endblock filters %}
 
 {% block content %}
-{% if add_category_form.errors %}
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  {{ add_category_form.errors }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endif %}
-{% if edit_category_form.errors %}
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  {{ edit_category_form.errors }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endif %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
       <th>Наименование</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th class="text-center" style="width: 10%;">Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -34,13 +51,18 @@
     <tr>
       <td class="align-middle">{{ category.name }}</td>
       <td class="text-center">
-        <a href="" class="btn btn-outline-success text-center edit-category" style="width: 40px;" title="Изменить" data-pk="{{ category.pk }}">
-          <i class="fa fa-edit"></i>
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+            data-action="edit"
+            data-url="{% url 'storage:edit-category' category.pk %}"
+            data-target="category"
+            title="Изменить категорию">
+            <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-category" style="width: 40px;" title="Удалить" data-pk="{{ category.pk }}"
-          data-name="{{ category.name }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-category' category.pk %}"
+          data-target="category"
+          title="Удалить категорию">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -48,51 +70,22 @@
     {% endfor %}
   </tbody>
 </table>
+
+{% include 'pagination.html' %}
+
 <script>
-  $('document').ready(function () {
-    $('.add-category').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/categories/add/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-category').modal('show');
-      });
-    });
-    $('.edit-category').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      console.log(pk);
-      $.ajax({
-        url: '/categories/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-category').modal('show');
-      });
-    });
-    $('.delete-category').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      console.log(pk);
-      url = '/categories/delete/' + pk + '/';
-      console.log('url for delete category = ' + url);
-      $('#delete-category .form').attr('action', url);
-      console.log('delete form action changed')
-      $('#delete-category .message').html('Удалить категорию "' + name + '"?');
-      $('#delete-category').modal('show');
-    });
+$(document).ready(function() {
+  // function for clear all filters and submit
+  $('.filter-clear-button').click(function() {
+    var form = $('#filter-form');
+    
+    // clear all fields
+    form.find('input, textarea, select').val('');
+    
+    // submit with empty values
+    form.submit();
   });
+});
 </script>
-<div class='add-modal'></div>
-<div class="edit-modal"></div>
-{% include 'delete_category.html' %}
+
 {% endblock content %}

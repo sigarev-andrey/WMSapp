@@ -2,20 +2,10 @@
 
 {% block title %} Производитель {% endblock title %}
 
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-manufacturer" style="width: 40px;" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-<button class="btn btn-outline-primary me-1" type="button" style="width: 40px; height: 40px; font-size: 17px;" data-bs-toggle="collapse"
-  data-bs-target="#filters" aria-expanded="false" aria-controls="filters" title="Фильтры">
-  <i class="fa fa-filter"></i>
-</button>
-{% endblock buttons %}
-
 {% block filters %}
 <form action="{%url 'storage:manufacturers' %}" method="GET" class="form">
   {% csrf_token %}
-  <div class="form-floating mb-3">
+  <div class="form-floating mb-3 mt-3">
     {{ filter_form.text_filter }}
     <label for="text_filter">Наименование</label>
   </div>
@@ -23,13 +13,27 @@
 </form>
 {% endblock filters %}
 
+{% block table_title %}
+<span class="align-middle">
+Производитель
+</span>
+<span class="align-middle float-end">
+  <button type="button" class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-manufacturer' %}"
+    data-target="manufacturer"
+    title="Добавить производителя">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
+
 {% block content %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Наименование</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="90%">Наименование</th>
+      <th class="text-center" width="10%">Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -37,13 +41,18 @@
     <tr>
       <td class="align-middle">{{ manufacturer.name }}</td>
       <td class="text-center align-middle">
-        <a class="btn btn-outline-success text-center edit-manufacturer" style="width: 40px;" title="Изменить" data-pk="{{ manufacturer.pk }}">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-manufacturer' manufacturer.pk %}"
+          data-target="manufacturer"
+          title="Изменить производителя">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center align-middle">
-        <a class="btn btn-outline-success text-center delete-manufacturer" style="width: 40px;" title="Удалить" data-pk="{{ manufacturer.pk }}"
-          data-name="{{ manufacturer.name }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-manufacturer' manufacturer.pk %}"
+          data-target="manufacturer"
+          title="Удалить производителя">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -52,86 +61,6 @@
   </tbody>
 </table>
 
-<!--Pagination-->
-{% if manufacturers.has_other_pages %}
-  <nav aria-label="Pagination">
-    <ul class="pagination">
-      {% if manufacturers.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Перв.</a></li>
-      {% endif %}
-      {% if manufacturers.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ manufacturers.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
-      {% endif %}
-      {% if manufacturers.number|add:-3 > 1 %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% for p in manufacturers.paginator.page_range %}
-        {% if manufacturers.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% elif p >= manufacturers.number|add:-3 and p <= manufacturers.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% endif %}
-      {% endfor %}
-      {% if manufacturers.number|add:+3 < manufacturers.paginator.num_pages %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% if manufacturers.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ manufacturers.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
-      {% endif %}
-      {% if manufacturers.number < manufacturers.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ manufacturers.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-{% endif %}
+{% include 'pagination.html' %}
 
-<script>
-  $('document').ready(function () {
-    $('.add-manufacturer').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/manufacturers/add/',
-        type: 'GET',
-        success: function (data) {
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-manufacturer').modal('show');
-      });
-    });
-    $('.edit-manufacturer').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      $.ajax({
-        url: '/manufacturers/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-manufacturer').modal('show');
-      });
-    });
-    $('.delete-manufacturer').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      url = '/manufacturers/delete/' + pk + '/';
-      $('#delete-manufacturer .form').attr('action', url);
-      $('#delete-manufacturer .message').html('Удалить производителя "' + name + '"?');
-      $('#delete-manufacturer').modal('show');
-    });
-  });
-</script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
-{% include 'delete_manufacturer.html' %}
 {% endblock content %}

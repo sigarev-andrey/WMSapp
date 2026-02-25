@@ -1,4 +1,4 @@
-<div class="modal fade" id="add-item" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true">
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="add-item-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -12,26 +12,26 @@
             <input class="form-control" id="manufacturer-datalist" placeholder="Производитель" name="manufacturer"
               type="text" list="manufacturers" autocomplete="off">
             <datalist id="manufacturers">
-              {% for i in add_item_form.fields.manufacturer.queryset %}
+              {% for i in form.fields.manufacturer.queryset %}
                 <option data-value="{{ i.id }}" value="{{ i.name }}"></option>
               {% endfor %}
             </datalist>
             <label for="manufacturer-datalist">Производитель</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_item_form.article }}
+            {{ form.article }}
             <label for="article">Артикул</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_item_form.category }}
+            {{ form.category }}
             <label for="category_name">Категория</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_item_form.description }}
+            {{ form.description }}
             <label for="description">Описание</label>
           </div>
           <div class="form-floating mb-3">
-            {{ add_item_form.unit }}
+            {{ form.unit }}
             <label for="unit_name">Ед. Изм.</label>
           </div>
         </div>
@@ -48,7 +48,7 @@
   $('.form').submit(function (e) {
     var value = $('#manufacturer-datalist').val();
     console.log(value);
-    var id = $('#manufacturers [value="' + value + '"]').data('value');
+    var id = $('#manufacturers [value="' + value.replace(/"/g, '\\"') + '"]').data('value');
     console.log(id);
     if (value != '' && id == null) {
       e.preventDefault();

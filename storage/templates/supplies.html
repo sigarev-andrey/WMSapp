@@ -2,27 +2,58 @@
 
 {% block title %} Поставки {% endblock title %}
 
-{% block storage_link_active %} class="nav-link" {% endblock storage_link_active %}
-{% block supply_link_active %} class="nav-link active" aria-current="page" {% endblock supply_link_active %}
-{% block outcome_link_active %} class="nav-link" {% endblock outcome_link_active %}
-{% block dictionary_link_active %} class="nav-link dropdown-toggle" {% endblock dictionary_link_active %}
+{% block table_title %}
+<span class="align-middle">
+Поставки
+</span>
+<span class="align-middle float-end">
+  <button type="button"
+    class="btn btn-outline-primary btn-circle action-button text-center"
+    data-action="add"
+    data-url="{% url 'storage:add-supply' %}"
+    data-target="supply"
+    title="Добавить">
+    <i class="fa fa-plus"></i>
+  </button>
+</span>
+{% endblock table_title %}
 
-{% block buttons %}
-<button type="button" class="btn btn-outline-primary me-1 add-supply" title="Добавить">
-  <i class="fa fa-plus"></i>
-</button>
-{% endblock buttons %}
+{% block filters %}
+<form action="{%url 'storage:supplies' %}" method="GET" class="form" id="filter-form">
+  {% csrf_token %}
+  <div class="form-floating filter-input mb-3 mt-3">
+    {{ filter_form.start_date }}
+    <label for="start_date">С</label>
+  </div>
+  <div class="form-floating filter-input mb-3 mt-3">
+    {{ filter_form.end_date }}
+    <label for="end_date">По</label>
+  </div>
+  <div class="form-floating filter-input mb-3">
+    {{ filter_form.contract }}
+    <label for="contract">Договор</label>
+  </div>
+  <button type="submit"
+    class="btn btn-outline-primary filter-ok-button"
+    title="Применить фильтры">
+    Применить
+  </button>
+  <button type="button"
+    class="btn btn-outline-primary filter-clear-button"
+    title="Очистить фильтры">
+    Очистить
+  </button>
+</form>
+{% endblock filters %}
 
 {% block content %}
-<table class="table table-striped">
-  <thead>
+<table class="table table-borderless table-striped rounded-3 overflow-hidden">
+  <thead class="custom-header">
     <tr>
-      <th>Дата</th>
-      <th>Договор</th>
-      <th>Описание</th>
-      <th class="text-center" style="width: 10%;">Подробно</th>
-      <th class="text-center" style="width: 10%;">Изменить</th>
-      <th class="text-center" style="width: 10%;">Удалить</th>
+      <th width="10%">Дата</th>
+      <th width="15%">Договор</th>
+      <th width="60%">Описание</th>
+      <th class="text-center" width="15%">Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -32,17 +63,23 @@
       <td class="align-middle" title="{{ supply.contract }}">{{ supply.contract.short_number }}</td>
       <td class="align-middle">{{ supply.description }}</td>
       <td class="text-center">
-        <a class="btn btn-outline-success text-center open-supply" title="Подробно" href="{% url 'storage:details-supply' supply.pk %}">
+        <a class="btn btn-outline-primary btn-circle text-center open-supply" 
+          title="Подробно"
+          href="{% url 'storage:details-supply' supply.pk %}">
           <i class="fa fa-search"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center edit-supply" title="Изменить" data-pk="{{ supply.pk }}">
+        <a href="#" class="btn btn-outline-success btn-circle action-button text-center"
+          data-action="edit"
+          data-url="{% url 'storage:edit-supply' supply.pk %}"
+          data-target="unit"
+          title="Изменить поставку">
           <i class="fa fa-edit"></i>
         </a>
-      </td>
-      <td class="text-center">
-        <a class="btn btn-outline-success text-center delete-supply" title="Удалить" data-pk="{{ supply.pk }}" data-name="{{ supply.date }} {{ supply.contract }}">
+        <a href="#" class="btn btn-outline-danger btn-circle action-button text-center"
+          data-action="delete"
+          data-url="{% url 'storage:delete-supply' supply.pk %}"
+          data-target="supply"
+          title="Удалить поставку">
           <i class="fa fa-trash"></i>
         </a>
       </td>
@@ -51,91 +88,21 @@
   </tbody>
 </table>
 
-<!--Pagination-->
-{% if supplies.has_other_pages %}
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      {% if supplies.number > 1 %}
-        <li class="page-item"><a class="page-link" href="?page=1{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Перв.</a></li>
-      {% else %}
-      <li class="page-item disabled"><a class="page-link">Перв.</a></li>
-      {% endif %}
-      {% if supplies.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ supplies.previous_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Пред.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">Пред.</a></li>
-      {% endif %}
-      {% if supplies.number|add:-3 > 1 %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% for p in supplies.paginator.page_range %}
-        {% if supplies.number == p %}
-          <li class="page-item active"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-        {% elif p >= supplies.number|add:-3 and p <= supplies.number|add:3 %}
-          <li class="page-item"><a class="page-link" href="?page={{ p }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">{{ p }}</a></li>
-        {% endif %}
-      {% endfor %}
-      {% if supplies.number|add:3 < supplies.paginator.num_pages %}
-        <li class="page-item"><a class="page-link">...</a></li>
-      {% endif %}
-      {% if supplies.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ supplies.next_page_number }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">След.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link" href="#">След.</a></li>
-      {% endif %}
-      {% if supplies.number < supplies.paginator.num_pages %}
-        <li class="page-item"><a class="page-link" href="?page={{ supplies.paginator.num_pages }}{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}">Посл.</a></li>
-      {% else %}
-        <li class="page-item disabled"><a class="page-link">Посл.</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-{% endif %}
+{% include 'pagination.html' %}
 
 <script>
-  $('document').ready(function () {
-    $('.add-supply').on('click', function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/supplies/add/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.add-modal').html(data);
-        }
-      }).done(function () {
-        $('#add-supply').modal('show');
-      });
-    });
-    $('.edit-supply').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      console.log(pk);
-      $.ajax({
-        url: '/supplies/edit/' + pk + '/',
-        type: 'GET',
-        success: function (data) {
-          console.log(data);
-          $('.edit-modal').html(data);
-        }
-      }).done(function () {
-        $('#edit-supply').modal('show');
-      });
-    });
-    $('.delete-supply').on('click', function (e) {
-      e.preventDefault();
-      pk = $(this).data('pk');
-      name = $(this).data('name');
-      console.log(pk);
-      url = '/supply/delete/' + pk + '/';
-      console.log('url for delete supply = ' + url);
-      $('#delete-unit .form').attr('action', url);
-      console.log('delete form action changed')
-      $('#delete-unit .message').html('Удалить ед. изм. "' + name + '"?');
-      $('#delete-unit').modal('show');
-    });
+$(document).ready(function() {
+  // function for clear all filters and submit
+  $('.filter-clear-button').click(function() {
+    var form = $('#filter-form');
+    
+    // clear all fields
+    form.find('input, textarea, select').val('');
+    
+    // submit with empty values
+    form.submit();
   });
+});
 </script>
-<div class="add-modal"></div>
-<div class="edit-modal"></div>
+
 {% endblock content %}
