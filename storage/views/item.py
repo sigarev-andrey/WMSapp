@@ -79,7 +79,7 @@ class ItemUpdateView(PermissionRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors.as_data())
-        return redirect('items')
+        return redirect('storage:items')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

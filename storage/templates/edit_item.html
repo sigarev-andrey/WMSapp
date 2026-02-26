@@ -55,7 +55,8 @@
   });
   $('.form').submit(function () {
     var value = $('#manufacturer-datalist').val();
-    $('#manufacturer-datalist').val($('#manufacturers [value="' + value + '"]').data('value'));
+    var id = $('#manufacturers [value="' + value.replace(/"/g, '\\"') + '"]').data('value');
+    $('#manufacturer-datalist').val(id);
   })
   $('#clear-input').click(function () {
     $('#manufacturer-datalist').val('');

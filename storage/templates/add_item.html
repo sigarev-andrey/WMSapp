@@ -47,9 +47,7 @@
 <script>
   $('.form').submit(function (e) {
     var value = $('#manufacturer-datalist').val();
-    console.log(value);
     var id = $('#manufacturers [value="' + value.replace(/"/g, '\\"') + '"]').data('value');
-    console.log(id);
     if (value != '' && id == null) {
       e.preventDefault();
       $('#manufacturer-datalist').css('border-color', 'red');
