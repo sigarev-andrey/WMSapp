@@ -1,16 +1,13 @@
 /*Main body*/
 body {
   background-color: #ffffff;
+  background-repeat: repeat;
   background-image: url('../img/background.png');
 }
 /*----------------------------*/
 
 /*Navigation side panel*/
 :root{ --sidebar-width: 280px; --toggle-offset: 12px; }
-
-  body {
-    min-height: 100vh;
-  }
 
   .offcanvas.offcanvas-start {
     width: var(--sidebar-width) !important;
@@ -257,10 +254,13 @@ body {
 
 /*Bootstrap table*/
 .table-title {
-  color: #132C38;
+  border-radius: 7px;
+  background-color: #f3efe2;
   font-size: 20px;
+  color: #132C38;
   font-weight: bold;
   text-transform:uppercase;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 }
 
 .table thead.custom-header {
@@ -272,10 +272,15 @@ body {
 .table {
   --bs-table-bg: #f3efe2;
   table-layout: fixed;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 }
 /*---------------*/
 
 /*Bootstrap pagination*/
+.pagination > li {
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+}
+
 .pagination > li > a
 {
   background-color: #3F857C;
@@ -328,7 +333,7 @@ body {
 }
 
 select {
-  width: 200px; /* Set your desired width */
+  width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
