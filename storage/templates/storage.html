@@ -2,13 +2,6 @@
 
 {% block title %} Склад {% endblock title %}
 
-
-<!--
-<a class="btn btn-outline-success text-center me-1" style="width: 40px; height: 40px; font-size: 17px" href="{% url 'storage:storage-export' %}?by_contract=0{% for fil, fil_value in filters.items %}&{{fil}}={{fil_value}}{% endfor %}"
-  title="Экспорт в Excel">
-  <i class="fa fa-file-excel-o"></i>
-</a>
--->
 {% block table_title %}
 Склад - общий
 {% endblock table_title %}
@@ -20,10 +13,10 @@
 </button>
 {% endblock buttons %}
 
-{% block filter %}
-<form action="{%url 'storage:storage' %}" method="GET" class="form">
+{% block filters %}
+<form action="{%url 'storage:storage' %}" method="GET" class="form" id="filter-form">
   {% csrf_token %}
-  <div class="form-floating mb-3">
+  <div class="form-floating mb-3 mt-3">
     {{ filter_form.text_filter }}
     <label for="text_filter">Наименование</label>
   </div>
@@ -31,9 +24,18 @@
     {{ filter_form.category }}
     <label for="text_filter">Категория</label>
   </div>
-  <button type="submit" class="btn btn-outline-primary" title="Применить фильтры">Применить</button>
+  <button type="submit"
+    class="btn btn-outline-primary filter-ok-button"
+    title="Применить фильтры">
+    Применить
+  </button>
+  <button type="button"
+    class="btn btn-outline-primary filter-clear-button"
+    title="Очистить фильтры">
+    Очистить
+  </button>
 </form>
-{% endblock filter %}
+{% endblock filters %}
 
 {% block content %}
 <div class="filter">
@@ -60,5 +62,20 @@
 </table>
 
 {% include 'pagination.html' %}
+
+<script>
+$(document).ready(function() {
+  // function for clear all filters and submit
+  $('.filter-clear-button').click(function() {
+    var form = $('#filter-form');
+    
+    // clear all fields
+    form.find('input, textarea, select').val('');
+    
+    // submit with empty values
+    form.submit();
+  });
+});
+</script>
 
 {% endblock content %}
