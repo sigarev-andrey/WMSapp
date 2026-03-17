@@ -20,4 +20,7 @@ $(document).ready(function () {
       $('#'+ action).modal('show');
     });
   });
+  $(document).on('hidden.bs.modal', '.modal', function () {
+    $(this).remove();
+  })
 });
