@@ -145,6 +145,7 @@ body {
   z-index: 1999; 
   border-radius:0px;
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+  background-color: var(--bs-alert-bg);
 }
 /*-------------------------------------------------*/
 
@@ -212,7 +213,11 @@ body {
   width: 20px;
   height: 20px;
   font-size: 11px;
-  text-align: center;
+  /*text-align: center;*/
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .filter-ok-button {
@@ -261,6 +266,21 @@ body {
   font-weight: bold;
   text-transform:uppercase;
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.table-title-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.table-title-actions {
+  flex-shrink: 0;
 }
 
 .table thead.custom-header {

@@ -3,14 +3,14 @@
 {% block title %} Поставки {% endblock title %}
 
 {% block table_title %}
-<span class="align-middle">
+<span>
 {% if supply.contract.short_number == "Без договора" %}
 Поставка от {{supply.date|date:'d.m.Y'}} <b>{{supply.contract}}</b>
 {% else %}
 Поставка от {{supply.date|date:'d.m.Y'}} по договору <b>№{{supply.contract.short_number}}</b> {{supply.description}}
 {% endif %}
 </span>
-<span class="align-middle float-end">
+<span>
   <button type="button"
     class="btn btn-outline-primary btn-circle action-button text-center"
     data-action="add"
