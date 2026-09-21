@@ -4,12 +4,53 @@ from ..forms import SupplyForm, ItemInSupplyForm, FilterForm
 from .data_processing import clean_filters
 from django.shortcuts import redirect, get_object_or_404
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from ..models import Supply, ItemInSupply, Item, Storage, Contract
 from ..logic import SupplyService
+
+
+AUTOCOMPLETE_LIMIT = 30
+AUTOCOMPLETE_MIN_QUERY_LENGTH = 2
+
+
+def _apply_item_search(queryset, query):
+    for term in query.split():
+        queryset = queryset.filter(
+            Q(article__icontains=term)
+            | Q(description__icontains=term)
+            | Q(manufacturer__name__icontains=term)
+        )
+    return queryset
+
+
+@permission_required('storage.view_item')
+def supply_item_options(request):
+    query = request.GET.get('q', '').strip()
+    if len(query) < AUTOCOMPLETE_MIN_QUERY_LENGTH:
+        return JsonResponse({'results': []})
+
+    items = (
+        _apply_item_search(
+            Item.objects.select_related('manufacturer', 'category', 'unit'),
+            query,
+        )
+        .order_by('manufacturer__name', 'article')[:AUTOCOMPLETE_LIMIT]
+    )
+
+    return JsonResponse({
+        'results': [
+            {
+                'id': item.id,
+                'label': str(item),
+            }
+            for item in items
+        ]
+    })
 
 
 class SupplyListView(PermissionRequiredMixin, ListView):
