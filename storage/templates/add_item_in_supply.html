@@ -12,11 +12,7 @@
             <div class="form-floating w-100">
               <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
                 type="text" list="items" autocomplete="off">
-                <datalist id="items" placeholder="Позиция">
-                  {% for i in form.fields.item.queryset %}
-                    <option data-value="{{ i.id }}" value="{{ i }}"></option>
-                  {% endfor %}
-                </datalist>
+                <datalist id="items" placeholder="Позиция"></datalist>
               <label for="item-datalist">Позиция</label>
             </div>
             <button class="btn btn-outline-secondary" type="button" id="clear-input" title="Очистить">
@@ -40,6 +36,11 @@
 <script>
   $(document).ready(function() {
     var datalistInput = document.getElementById('item-datalist');
+    var datalistAutocomplete = setupDatalistAutocomplete({
+      inputSelector: '#item-datalist',
+      datalistSelector: '#items',
+      url: '{% url "storage:supply-item-options" %}'
+    });
     var datalistPopoverEmpty = new bootstrap.Popover(datalistInput, {
       content: 'Поле не должно быть пустым',
       trigger: 'manual'
@@ -55,6 +56,7 @@
     })
     $('#clear-input').click(function () {
       $('#item-datalist').val('');
+      datalistAutocomplete.clear();
     });
     $('#item-datalist').click(function() {
       $(this).css('border-color', '#001427');
@@ -75,7 +77,7 @@
       $('#item-datalist').css('border-color', '#F24236');
       datalistPopoverEmpty.show();
     } else {
-      id = $('#items [value="' + datalist_value.replace(/"/g, '\\"') + '"]').data('value');
+      id = datalistAutocomplete.findSelectedOption(datalist_value).data('value');
       if (id != null) {
         datalist_valid = true;
       } else {
