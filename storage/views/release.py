@@ -4,12 +4,78 @@ from ..forms import ReleaseForm, ItemInReleaseForm, FilterForm
 from .data_processing import clean_filters
 from django.shortcuts import redirect, get_object_or_404
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from ..models import Release, ItemInRelease, Item, Storage, Contract
 from ..logic import ReleaseService
+
+
+AUTOCOMPLETE_LIMIT = 30
+AUTOCOMPLETE_MIN_QUERY_LENGTH = 2
+
+
+def _apply_storage_search(queryset, query):
+    for term in query.split():
+        queryset = queryset.filter(
+            Q(item__article__icontains=term)
+            | Q(item__description__icontains=term)
+            | Q(item__manufacturer__name__icontains=term)
+            | Q(contract__short_number__icontains=term)
+            | Q(contract__full_number__icontains=term)
+            | Q(contract__description__icontains=term)
+        )
+    return queryset
+
+
+def _storage_option_label(storage_item):
+    manufacturer = storage_item.item.manufacturer.name if storage_item.item.manufacturer else ''
+    return ' '.join(
+        part for part in [
+            manufacturer,
+            storage_item.item.article,
+            str(storage_item.contract),
+            storage_item.item.description,
+        ]
+        if part
+    )
+
+
+@permission_required('storage.view_storage')
+def release_item_options(request):
+    query = request.GET.get('q', '').strip()
+    contract_id = request.GET.get('contract')
+    if len(query) < AUTOCOMPLETE_MIN_QUERY_LENGTH:
+        return JsonResponse({'results': []})
+
+    storage_items = Storage.objects.select_related(
+        'item',
+        'item__manufacturer',
+        'contract',
+    ).filter(count__gt=0)
+
+    if contract_id:
+        storage_items = storage_items.filter(contract_id=contract_id)
+
+    storage_items = (
+        _apply_storage_search(storage_items, query)
+        .order_by('item__manufacturer__name', 'item__article', 'contract__short_number')[:AUTOCOMPLETE_LIMIT]
+    )
+
+    return JsonResponse({
+        'results': [
+            {
+                'id': storage_item.id,
+                'label': _storage_option_label(storage_item),
+                'count': storage_item.count,
+                'contract': str(storage_item.contract),
+            }
+            for storage_item in storage_items
+        ]
+    })
 
 
 class ReleaseListView(PermissionRequiredMixin, ListView):
