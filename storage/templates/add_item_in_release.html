@@ -17,11 +17,7 @@
             <div class="form-floating w-100">
               <input class="form-control" id="item-datalist" placeholder="Позиция" name="item"
                 type="text" list="items" autocomplete="off">
-              <datalist id="items">
-                {% for i in form.fields.item.queryset %}
-                  <option data-value="{{ i.id }}" data-count="{{ i.count }}" data-contract="{{ i.contract }}" value="{{ i.manufacturer_name|default_if_none:'' }} {{ i.item_article }} {{ i.contract }} {{ i.item_description }}"></option>
-                {% endfor %}
-              </datalist>
+              <datalist id="items"></datalist>
               <label for="item-datalist">Позиция</label>
             </div>
             <button class="btn btn-outline-secondary" type="button" id="clear-input" title="Очистить">
@@ -48,6 +44,19 @@
 <script>
   $(document).ready(function() {
     var datalistInput = document.getElementById('item-datalist');
+    var max_count = 0;
+    var datalistAutocomplete = setupDatalistAutocomplete({
+      inputSelector: '#item-datalist',
+      datalistSelector: '#items',
+      url: '{% url "storage:release-item-options" %}',
+      extraParams: function() {
+        return { contract: $('#contract').val() };
+      },
+      onCleared: function() {
+        max_count = 0;
+        $('#count-label').html('');
+      }
+    });
     var datalistPopoverEmpty = new bootstrap.Popover(datalistInput, {
       content: 'Поле не должно быть пустым',
       trigger: 'manual'
@@ -57,7 +66,6 @@
       trigger: 'manual'
     });
     var countInput = document.getElementById('count');
-    var max_count = 0;
     var countPopoverWrongNumber = new bootstrap.Popover(countInput, {
       content: 'Введите целое, положительное число, больше 0',
       trigger: 'manual'
@@ -69,17 +77,14 @@
     $('#clear-input').click(function() {
       $('#item-datalist').val('');
       $('#count-label').html('');
+      max_count = 0;
+      datalistAutocomplete.clear();
     });
     $('#contract').on('change', function() {
-	    var opt = $(this).find('option:selected');
-      console.log(opt.text());
-	    $('#items option').prop('disabled', false);
       $('#item-datalist').val('');
       $('#count-label').html('');
-	    if(opt.length > 0 && opt.text() != '---------') {
-		    $('#items option').prop('disabled', true);
-		    $('#items option[data-contract="'+opt.text()+'"]').prop('disabled', false);
-	    }
+      max_count = 0;
+      datalistAutocomplete.clear();
     });
     $('#item-datalist').click(function() {
       $(this).css('border-color', '#001427');
@@ -93,12 +98,12 @@
     })
     $('#item-datalist').on('input', function () {
     var val = this.value;
-    if($('#items option').filter(function() {
-        return this.value.toUpperCase() === val.toUpperCase();        
-    }).length) {
-      max_count = $('#items [value="' + val.replace(/"/g, '\\"') + '"]').data('count');
+    var selectedOption = datalistAutocomplete.findSelectedOption(val);
+    if(selectedOption.length) {
+      max_count = selectedOption.data('count');
       $('#count-label').html('max=' + max_count);
     } else {
+      max_count = 0;
       $('#count-label').html('');
     }
   })
@@ -112,9 +117,11 @@
       $('#item-datalist').css('border-color', '#F24236');
       datalistPopoverEmpty.show();
     } else {
-      var id = $('#items [value="' + datalist_value.replace(/"/g, '\\"') + '"]').data('value');
+      var selectedOption = datalistAutocomplete.findSelectedOption(datalist_value);
+      var id = selectedOption.data('value');
       if (id != null) {
         datalist_valid = true;
+        max_count = selectedOption.data('count');
       } else {
         e.preventDefault();
         $('#item-datalist').css('border-color', '#F24236');
