@@ -12,11 +12,11 @@ from .views import (
     ItemListView, ItemCreateView, ItemUpdateView, ItemDeleteView,
     CompanyListView, CompanyCreateView, CompanyUpdateView, CompanyDeleteView,
     SupplyListView, SupplyDetailView, SupplyCreateView, SupplyUpdateView, SupplyDeleteView,
-    ItemInSupplyCreateView, ItemInSupplyDeleteView, supply_item_options,
+    ItemInSupplyCreateView, ItemInSupplyDeleteView,
     StaffListView, StaffCreateView, StaffUpdateView, StaffDeleteView,
     ContractListView, ContractCreateView, ContractUpdateView, ContractDeleteView,
     ReleaseListView, ReleaseDetailView, ReleaseCreateView, ReleaseUpdateView, ReleaseDeleteView,
-    ItemInReleaseCreateView, ItemInReleaseDeleteView, release_item_options,
+    ItemInReleaseCreateView, ItemInReleaseDeleteView,
     report_common, report_by_contract,
 )
 
@@ -28,9 +28,6 @@ urlpatterns = [
     #storage path
     path('storage/', StorageListView.as_view(), name='storage'),
     path('storage_with_contract/', StorageWithContractListView.as_view(), name='storage_with_contract'),
-    #autocomplete endpoints
-    path('api/items/options/', supply_item_options, name='supply-item-options'),
-    path('api/storage/options/', release_item_options, name='release-item-options'),
     #manufacturer instance path
     path('manufacturers/', ManufacturerListView.as_view(), name='manufacturers'),
     path('manufacturers/add/', ManufacturerCreateView.as_view(), name='add-manufacturer'),
