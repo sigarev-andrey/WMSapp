@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('mobile/', include('storage.mobile.urls')),
     path('', include('storage.urls')),
     path('admin/', admin.site.urls),
 ]
