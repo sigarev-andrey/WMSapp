@@ -63,7 +63,8 @@
     </div>
 
       <nav class="nav flex-column">
-        <a class="nav-link" href="{% url 'mobile:stock' %}">Мобильная версия</a>
+        <a class="nav-link" href="{% url 'mobile:stock' %}?ui=mobile">Мобильная версия</a>
+        <a class="nav-link" href="{% url 'storage:storage' %}?ui=auto">Автовыбор интерфейса</a>
 
         <div class="submenu-header" data-target="#storage-submenu">
           <span class="submenu-title">Склад</span>

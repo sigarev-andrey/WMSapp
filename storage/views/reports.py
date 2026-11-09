@@ -58,14 +58,16 @@ def report_common(request):
         categories = Category.objects.all()
 
         wb = xlwt.Workbook(encoding='utf-8')
+        has_sheets = False
+        header_style = xlwt.easyxf('font: bold 1, name Calibri, height 240; align: vert center, horiz center;')
 
         for category in categories:
             rows = storage.filter(category=category)
             if not rows:
                 continue
             ws = wb.add_sheet(category.name)
+            has_sheets = True
             row_num = 0
-            header_style = xlwt.easyxf('font: bold 1, name Calibri, height 240; align: vert center, horiz center;')
             ws.row(row_num).height_mismatch = True
             ws.row(row_num).height = 30 * 20
             columns_width = []
@@ -82,6 +84,13 @@ def report_common(request):
             for col_num in range(len(columns_width)):
                 ws.col(col_num).width = columns_width[col_num]
         
+        if not has_sheets:
+            ws = wb.add_sheet('Остатки')
+            for col_num, column in enumerate(columns):
+                ws.write(0, col_num, column, header_style)
+                ws.col(col_num).width = get_width(max(len(column), 18))
+            ws.write(1, 0, 'Нет данных по заданным фильтрам')
+
         wb.save(response)
         return response
     else:

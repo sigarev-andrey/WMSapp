@@ -46,6 +46,8 @@
         {{ form.password }}
       </div>
       <button type="submit" class="btn btn-outline-primary form-control">Войти</button>
+      <a class="d-block text-center mt-3" href="{% url 'mobile:login' %}?ui=mobile">Мобильная версия</a>
+      <a class="d-block text-center mt-2" href="{% url 'storage:login' %}?ui=auto">Автовыбор интерфейса</a>
     </form>
   </div>
 </body>
