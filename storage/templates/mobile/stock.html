@@ -1,0 +1,21 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Рабочее пространство</p><h1>Склад<span class="heading-dot">.</span></h1></div><span class="section-symbol">{% include 'mobile/icon.html' with name='box' %}</span></div>
+<p class="page-intro">Остатки оборудования и материалов</p>
+<nav class="segmented" aria-label="Вид остатков">
+  <a href="?mode=all{% if common_mode_query %}&amp;{{ common_mode_query }}{% endif %}" {% if not by_contract %}aria-current="page"{% endif %}>Общий склад</a>
+  <a href="?mode=contracts{% if mode_query %}&amp;{{ mode_query }}{% endif %}" {% if by_contract %}aria-current="page"{% endif %}>По договорам</a>
+</nav>
+{% include 'mobile/filters.html' with search_in_filters=True %}
+<div class="list-heading"><h2>В наличии</h2><span>Позиций: {{ page_obj.paginator.count }}</span></div>
+<div class="card-list">
+{% for row in page_obj %}
+  <article class="stock-card">
+    <div class="card-meta"><span class="category-tag">{{ row.category }}</span>{% if by_contract %}<span class="contract-tag">№ {{ row.contract_number }}</span>{% endif %}</div>
+    <h3>{{ row.full_item_name }}</h3>
+    <div class="stock-footer"><span class="availability"><span></span>На складе</span><div class="quantity">{% if by_contract %}{{ row.count }}{% else %}{{ row.total_count }}{% endif %}<span>{{ row.unit }}</span></div></div>
+  </article>
+{% empty %}{% include 'mobile/empty.html' %}{% endfor %}
+</div>
+{% include 'mobile/pagination.html' %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Справочник</p><h1>{{ title }}</h1></div>{% if can_add %}<a class="icon-button primary" href="{% url 'mobile:directory-add' kind %}" aria-label="Добавить запись">{% include 'mobile/icon.html' with name='plus' %}</a>{% endif %}</div>
+{% include 'mobile/filters.html' %}
+<div class="list-heading"><h2>Записи</h2><span>Всего: {{ page_obj.paginator.count }}</span></div>
+<div class="card-list">{% for object in page_obj %}
+  <article class="stock-card"><h3>{% if kind == 'staff' %}{{ object.surname }} {{ object.name }} {{ object.patronymic }}{% else %}{{ object }}{% endif %}</h3>{% if kind == 'items' %}<p class="muted">{{ object.category }} · {{ object.unit }}</p>{% endif %}{% if kind == 'contracts' and object.full_number %}<p class="muted">{{ object.full_number }}</p>{% endif %}
+  {% if can_edit or can_delete %}<div class="card-actions">{% if can_edit %}<a class="button secondary compact" href="{% url 'mobile:directory-edit' kind object.pk %}">Изменить</a>{% endif %}{% if can_delete %}<a class="button danger-quiet compact" href="{% url 'mobile:directory-delete' kind object.pk %}">Удалить</a>{% endif %}</div>{% endif %}</article>
+{% empty %}{% include 'mobile/empty.html' %}{% endfor %}</div>
+{% include 'mobile/pagination.html' %}
+{% endblock %}

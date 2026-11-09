@@ -1,0 +1,8 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<h1>{{ title }}</h1>
+<section class="form-panel"><p class="delete-object">{{ object }}</p><p class="muted">{{ explanation|default:'Удалённую запись нельзя восстановить.' }}</p>
+{% if error %}<div class="notice error" role="alert">{{ error }}</div>{% endif %}
+<form method="post" data-submit-form>{% csrf_token %}<div class="form-actions"><button class="button danger" type="submit">Подтвердить удаление</button><a class="button secondary" href="{{ back_url }}">Отмена</a></div></form>
+</section>
+{% endblock %}

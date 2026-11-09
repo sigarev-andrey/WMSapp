@@ -1,0 +1,16 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Движение товара</p><h1>{{ title }}<span class="heading-dot">.</span></h1></div>{% if can_add %}<a class="icon-button primary" href="{% url 'mobile:document-add' kind %}" aria-label="{% if kind == 'supplies' %}Добавить поставку{% else %}Добавить выдачу{% endif %}">{% include 'mobile/icon.html' with name='plus' %}</a>{% endif %}</div>
+<p class="page-intro">{% if kind == 'supplies' %}Приём оборудования и материалов{% else %}Передача материалов со склада{% endif %}</p>
+{% include 'mobile/filters.html' %}
+<div class="list-heading"><h2>Документы</h2><span>Всего: {{ page_obj.paginator.count }}</span></div>
+<div class="card-list">
+{% for document in page_obj %}
+  <article class="document-card">
+    <div class="document-date"><span class="document-icon {% if kind == 'releases' %}outgoing{% endif %}">{% if kind == 'supplies' %}{% include 'mobile/icon.html' with name='in' %}{% else %}{% include 'mobile/icon.html' with name='out' %}{% endif %}</span><div><h3>{% if can_detail %}<a class="stretched-link" href="{% url 'mobile:document-detail' kind document.pk %}">{{ document.date|date:'d E Y' }}</a>{% else %}{{ document.date|date:'d E Y' }}{% endif %}</h3><span class="muted">{% if kind == 'supplies' %}Поставка{% else %}Выдача{% endif %} №{{ document.pk }}</span></div>{% if can_detail %}{% include 'mobile/icon.html' with name='chevron' %}{% endif %}</div>
+    <div class="document-info"><span class="contract-tag">Договор № {{ document.contract.short_number }}</span>{% if kind == 'releases' %}<p>{{ document.company }}{% if document.staff %} · {{ document.staff }}{% endif %}</p>{% endif %}{% if document.description %}<p>{{ document.description }}</p>{% endif %}</div>
+  </article>
+{% empty %}{% include 'mobile/empty.html' %}{% endfor %}
+</div>
+{% include 'mobile/pagination.html' %}
+{% endblock %}

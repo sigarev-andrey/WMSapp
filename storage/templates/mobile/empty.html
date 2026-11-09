@@ -1,0 +1,5 @@
+<div class="empty-state">
+  <span class="empty-icon">{% include 'mobile/icon.html' with name='box' %}</span>
+  <h2>{% if has_filters %}Ничего не найдено{% else %}Здесь пока пусто{% endif %}</h2>
+  <p>{% if has_filters %}Измените запрос или сбросьте фильтры.{% else %}Записи появятся после добавления данных.{% endif %}</p>
+</div>

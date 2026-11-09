@@ -1,0 +1,9 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<p class="eyebrow">Рабочее пространство</p><h1>Ещё<span class="heading-dot">.</span></h1>
+<section class="profile-panel"><span class="profile-avatar">{% include 'mobile/icon.html' with name='user' %}</span><div><h2>{{ user.get_username }}</h2><p>Мобильная версия WMS</p></div></section>
+{% if directories %}<h2 class="section-title">Справочники</h2><nav class="menu-list" aria-label="Справочники">{% for directory in directories %}<a href="{% url 'mobile:directory' directory.kind %}"><span>{{ directory.title }}</span>{% include 'mobile/icon.html' with name='chevron' %}</a>{% endfor %}</nav>{% endif %}
+{% if stock_reports or contract_reports %}<h2 class="section-title">Отчёты</h2><nav class="menu-list" aria-label="Отчёты">{% if stock_reports %}<a href="{% url 'mobile:report' 'stock' %}">{% include 'mobile/icon.html' with name='file' %}<span>Остатки на складе</span>{% include 'mobile/icon.html' with name='chevron' %}</a>{% endif %}{% if contract_reports %}<a href="{% url 'mobile:report' 'contract' %}">{% include 'mobile/icon.html' with name='file' %}<span>Движение по договору</span>{% include 'mobile/icon.html' with name='chevron' %}</a>{% endif %}</nav>{% endif %}
+<div class="account-actions"><a class="button secondary" href="{% url 'storage:storage' %}?ui=desktop">Полная версия</a><a class="button secondary" href="{% url 'storage:storage' %}?ui=auto">Автовыбор интерфейса</a><form method="post" action="{% url 'mobile:logout' %}">{% csrf_token %}<button type="submit" class="button danger-quiet">{% include 'mobile/icon.html' with name='logout' %} Выйти из аккаунта</button></form></div>
+<p class="app-note">WMS · Складской учёт</p>
+{% endblock %}

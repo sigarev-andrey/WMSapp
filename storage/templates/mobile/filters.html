@@ -1,0 +1,19 @@
+<form method="get" class="search-panel" role="search">
+  {% if by_contract %}<input type="hidden" name="mode" value="contracts">{% endif %}
+  {% if not search_in_filters %}
+  <label class="sr-only" for="{{ filter_form.q.id_for_label }}">Поиск</label>
+  <div class="search-row">{{ filter_form.q }}<button class="icon-button" type="submit" aria-label="Найти">{% include 'mobile/icon.html' with name='search' %}</button></div>
+  {% for error in filter_form.q.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+  {% endif %}
+  {% if search_in_filters or filter_form.fields|length > 1 %}
+  <details class="filters" {% if filter_form.errors %}open{% endif %}>
+    <summary>{% include 'mobile/icon.html' with name='filter' %} Фильтры{% if has_filters %}<span class="filter-dot" aria-label="Заданы параметры"></span>{% endif %}</summary>
+    <div class="filter-fields">
+      {{ filter_form.non_field_errors }}
+      {% for field in filter_form %}{% if search_in_filters or field.name != 'q' %}{% include 'mobile/field.html' %}{% endif %}{% endfor %}
+      <div class="button-row"><button class="button primary" type="submit">Применить</button><a class="button secondary" href="{{ request.path }}{% if by_contract %}?mode=contracts{% endif %}">Сбросить</a></div>
+    </div>
+  </details>
+  {% endif %}
+  {% if has_filters %}<a class="clear-search" href="{{ request.path }}{% if by_contract %}?mode=contracts{% endif %}">Сбросить поиск и фильтры</a>{% endif %}
+</form>

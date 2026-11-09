@@ -1,0 +1,16 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<p class="eyebrow">{{ document.date|date:'d E Y' }}</p><h1>{{ title }}</h1>
+<section class="detail-panel">
+  <dl><div><dt>Договор</dt><dd>{{ document.contract }}</dd></div>{% if kind == 'releases' %}<div><dt>Организация</dt><dd>{{ document.company }}</dd></div>{% if document.staff %}<div><dt>Сотрудник</dt><dd>{{ document.staff }}</dd></div>{% endif %}{% endif %}{% if document.description %}<div><dt>Примечание</dt><dd>{{ document.description|linebreaksbr }}</dd></div>{% endif %}</dl>
+  {% if can_edit or can_delete %}<div class="button-row">{% if can_edit %}<a class="button secondary" href="{% url 'mobile:document-edit' kind document.pk %}">Изменить</a>{% endif %}{% if can_delete %}<a class="button danger-quiet" href="{% url 'mobile:document-delete' kind document.pk %}">Удалить</a>{% endif %}</div>{% endif %}
+</section>
+<div class="list-heading"><h2>Позиции <span class="count-badge">{{ page_obj.paginator.count }}</span></h2>{% if can_add_line %}<a class="button primary compact" href="{% url 'mobile:line-add' kind document.pk %}">{% include 'mobile/icon.html' with name='plus' %} Добавить</a>{% endif %}</div>
+<div class="card-list">{% for line in page_obj %}
+  <article class="stock-card">
+    {% if kind == 'supplies' %}<h3>{{ line.item }}</h3>{% else %}<span class="contract-tag">Со склада по договору № {{ line.item.contract.short_number }}</span><h3>{{ line.item.item }}</h3>{% endif %}
+    <div class="stock-footer"><div class="quantity">{{ line.count }}<span>{% if kind == 'supplies' %}{{ line.item.unit }}{% else %}{{ line.item.item.unit }}{% endif %}</span></div>{% if can_delete_line %}<a class="button danger-quiet compact" href="{% url 'mobile:line-delete' kind document.pk line.pk %}">Удалить</a>{% endif %}</div>
+  </article>
+{% empty %}{% include 'mobile/empty.html' %}{% endfor %}</div>
+{% include 'mobile/pagination.html' %}
+{% endblock %}

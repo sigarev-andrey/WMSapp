@@ -1,0 +1,11 @@
+{% extends 'mobile/base.html' %}
+{% block content %}
+<h1>{{ title }}</h1>{% if subtitle %}<p class="page-intro">{{ subtitle }}</p>{% endif %}
+<form method="post" class="form-panel" {% if not is_download %}data-submit-form{% endif %}>
+  {% csrf_token %}
+  {% if form.errors %}<div class="notice error" role="alert">Не удалось сохранить. Проверьте поля ниже.{{ form.non_field_errors }}</div>{% endif %}
+  {% if searchable_item %}<div class="field" data-item-search hidden><label for="item-search">Поиск позиции в списке</label><input id="item-search" type="search" placeholder="Название, артикул или договор" autocomplete="off"><p class="help-text" data-search-status aria-live="polite"></p></div>{% endif %}
+  {% for field in form %}{% include 'mobile/field.html' %}{% if searchable_item and field.name == 'item' %}<p class="selected-item" data-selected-item aria-live="polite" hidden></p>{% endif %}{% endfor %}
+  <div class="form-actions"><button type="submit" class="button primary">{{ submit_label|default:'Сохранить' }}</button><a class="button secondary" href="{{ back_url }}">Отмена</a></div>
+</form>
+{% endblock %}

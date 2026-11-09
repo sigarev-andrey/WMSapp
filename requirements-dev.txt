@@ -1,0 +1,3 @@
+# Compatible with the application's Django 4.2 baseline.
+Django>=4.2,<5.0
+xlwt==1.3.0
